@@ -113,23 +113,46 @@ async function saveExtracted() {
   setEmailText('');
 }
 
-  function saveManual() {
-    if (!manualTitle || !manualDate) return;
-    setDeadlines([
-      {
-        id: Date.now(),
-        title: manualTitle,
-        provider: 'Inserito manualmente',
-        category: 'Altro',
-        dueDate: manualDate,
-        amount: manualAmount ? Number(manualAmount) : null,
-      },
-      ...deadlines,
-    ]);
-    setManualTitle('');
-    setManualDate('');
-    setManualAmount('');
+  async function saveManual() {
+  if (!manualTitle || !manualDate) return;
+
+  const deadline = {
+    title: manualTitle,
+    provider: 'Inserito manualmente',
+    category: 'Altro',
+    due_date: manualDate,
+    amount: manualAmount ? Number(manualAmount) : null,
+  };
+
+  const { data, error } = await supabase
+    .from('deadlines')
+    .insert([deadline])
+    .select();
+
+  if (error) {
+    console.error('Errore salvataggio manuale:', error);
+    alert('Errore durante il salvataggio.');
+    return;
   }
+
+  const saved = data[0];
+
+  setDeadlines([
+    {
+      id: `db-${saved.id}`,
+      title: saved.title,
+      provider: saved.provider,
+      category: saved.category,
+      dueDate: saved.due_date,
+      amount: saved.amount === null ? null : Number(saved.amount),
+    },
+    ...deadlines,
+  ]);
+
+  setManualTitle('');
+  setManualDate('');
+  setManualAmount('');
+}
 
 async function deleteDeadline(id) {
   const dbId = String(id).replace('db-', '');
