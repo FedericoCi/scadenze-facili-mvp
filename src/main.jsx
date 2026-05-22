@@ -76,7 +76,7 @@ function App() {
           <div>
             <div className="brand-row">
   <h1>ScadenzeFacili</h1>
-  <span className="beta-badge">Beta privata</span>
+  <span className="beta-badge">Beta privata.</span>
 </div>
 <p>Non dimenticare più bollette, bolli e documenti.</p>
           </div>
