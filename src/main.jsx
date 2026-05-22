@@ -128,9 +128,22 @@ async function saveExtracted() {
     setManualAmount('');
   }
 
-  function deleteDeadline(id) {
-    setDeadlines(deadlines.filter((item) => item.id !== id));
+  async function deleteDeadline(id) {
+  const dbId = String(id).replace('db-', '');
+
+  const { error } = await supabase
+    .from('deadlines')
+    .delete()
+    .eq('id', dbId);
+
+  if (error) {
+    console.error('Errore eliminazione Supabase:', error);
+    alert('Errore durante eliminazione.');
+    return;
   }
+
+  setDeadlines(deadlines.filter((item) => item.id !== id));
+}
 
   function startFakeAnalysis(fileName = 'bolletta-luce.pdf') {
   setUploadedFileName(fileName);
