@@ -52,3 +52,17 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
   .deadline-row { align-items: flex-start; flex-direction: column; }
   .deadline-actions { width: 100%; justify-content: space-between; }
 }
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.beta-badge {
+  background: #111827;
+  color: white;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}

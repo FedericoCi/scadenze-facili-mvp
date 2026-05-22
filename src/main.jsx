@@ -74,8 +74,11 @@ function App() {
       <div className="shell">
         <header className="header">
           <div>
-            <h1>ScadenzeFacili</h1>
-            <p>Tutte le tue scadenze sotto controllo, senza inserirle a mano.</p>
+            <div className="brand-row">
+  <h1>ScadenzeFacili</h1>
+  <span className="beta-badge">Beta privata</span>
+</div>
+<p>Non dimenticare più bollette, bolli e documenti.</p>
           </div>
           <div className="trust-pill"><ShieldCheck size={16} /> Documento eliminabile dopo l'estrazione</div>
         </header>
