@@ -31,9 +31,22 @@ function App() {
   const [manualDate, setManualDate] = useState('');
   const [manualAmount, setManualAmount] = useState('');
   const [editingDeadline, setEditingDeadline] = useState(null);
+  const [session, setSession] = useState(null);
+  const [authEmail, setAuthEmail] = useState('');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+  setSession(session);
+});
+
+const {
+  data: { subscription },
+} = supabase.auth.onAuthStateChange((_event, session) => {
+  setSession(session);
+});
+
   async function loadDeadlines() {
     const { data, error } = await supabase
       .from('deadlines')
@@ -58,6 +71,7 @@ function App() {
   }
 
   loadDeadlines();
+  return () => subscription.unsubscribe();
 }, []);
 
   const monthTotal = useMemo(() => deadlines.reduce((sum, item) => sum + (Number(item.amount) || 0), 0), [deadlines]);
@@ -172,6 +186,27 @@ async function deleteDeadline(id) {
 }
 
 async function updateDeadline() {
+
+  async function signIn() {
+  if (!authEmail) return;
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: authEmail,
+  });
+
+  if (error) {
+    console.error(error);
+    alert('Errore login');
+    return;
+  }
+
+  alert('Controlla la tua email per il link di accesso.');
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+}
+
   if (!editingDeadline) return;
 
   const dbId = String(editingDeadline.id).replace('db-', '');
