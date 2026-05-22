@@ -21,6 +21,7 @@ function formatAmount(amount) {
 function App() {
   const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [showExtraction, setShowExtraction] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showEmailPaste, setShowEmailPaste] = useState(false);
   const [emailText, setEmailText] = useState('');
   const [manualTitle, setManualTitle] = useState('');
@@ -89,7 +90,20 @@ function App() {
             <h2>Carica un PDF o una foto.</h2>
             <p>Troviamo data, importo e categoria. Tu controlli e salvi la scadenza.</p>
             <div className="actions">
-              <button className="primary" onClick={() => setShowExtraction(true)}><Upload size={20} /> Carica documento</button>
+              <button
+  className="primary"
+  onClick={() => {
+    setIsAnalyzing(true);
+
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setShowExtraction(true);
+    }, 2200);
+  }}
+>
+  <Upload size={20} />
+  Carica documento
+</button>
               <button className="secondary" onClick={() => setShowEmailPaste(!showEmailPaste)}><Mail size={20} /> Incolla testo mail</button>
             </div>
             <small>Puoi salvare solo la scadenza ed eliminare il documento subito dopo.</small>
@@ -112,25 +126,40 @@ function App() {
           </section>
         )}
 
-        {showExtraction && (
-          <section className="panel extraction">
-            <h2>Ho trovato questa scadenza</h2>
-            <p>Controlla i dati prima di salvarla. Non salviamo nulla senza conferma.</p>
-            <div className="extracted-grid">
-              <Info label="Titolo" value={extracted.title} />
-              <Info label="Fornitore" value={extracted.provider} />
-              <Info label="Categoria" value={extracted.category} />
-              <Info label="Scadenza" value={formatDate(extracted.dueDate)} />
-              <Info label="Importo" value={formatAmount(extracted.amount)} />
-            </div>
-            <div className="smart-note"><strong>Nota smart:</strong> {extracted.insight}</div>
-            <div className="actions">
-              <button className="primary" onClick={saveExtracted}>Conferma e salva</button>
-              <button className="secondary" onClick={() => setShowExtraction(false)}>Modifica</button>
-              <button className="ghost" onClick={() => setShowExtraction(false)}>Scarta</button>
-            </div>
-          </section>
-        )}
+        {isAnalyzing && (
+  <section className="panel analyzing-panel">
+    <div className="analyzing-spinner"></div>
+
+    <h2>Analizzo il documento...</h2>
+
+    <div className="analyzing-steps">
+      <div>✓ Lettura PDF completata</div>
+      <div>✓ Data scadenza trovata</div>
+      <div>✓ Importo identificato</div>
+      <div>✓ Categoria classificata</div>
+    </div>
+  </section>
+)}
+
+{showExtraction && (
+  <section className="panel extraction">
+    <h2>Ho trovato questa scadenza</h2>
+    <p>Controlla i dati prima di salvarla. Non salviamo nulla senza conferma.</p>
+    <div className="extracted-grid">
+      <Info label="Titolo" value={extracted.title} />
+      <Info label="Fornitore" value={extracted.provider} />
+      <Info label="Categoria" value={extracted.category} />
+      <Info label="Scadenza" value={formatDate(extracted.dueDate)} />
+      <Info label="Importo" value={formatAmount(extracted.amount)} />
+    </div>
+    <div className="smart-note"><strong>Nota smart:</strong> {extracted.insight}</div>
+    <div className="actions">
+      <button className="primary" onClick={saveExtracted}>Conferma e salva</button>
+      <button className="secondary" onClick={() => setShowExtraction(false)}>Modifica</button>
+      <button className="ghost" onClick={() => setShowExtraction(false)}>Scarta</button>
+    </div>
+  </section>
+)}
 
         <section className="stats">
           <Stat icon={<CalendarDays size={20} />} label="Prossimi 7 giorni" value={nextSevenDays} hint="scadenze da controllare" />
