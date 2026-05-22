@@ -76,7 +76,7 @@ function App() {
           <div>
             <div className="brand-row">
   <h1>ScadenzeFacili</h1>
-  <span className="beta-badge">Beta privata.</span>
+  <span className="beta-badge">Beta privata</span>
 </div>
 <p>Non dimenticare più bollette, bolli e documenti.</p>
           </div>
@@ -137,6 +137,50 @@ function App() {
           <Stat icon={<FileText size={20} />} label="Uscite previste" value={formatAmount(monthTotal)} hint="importi conosciuti" />
           <Stat icon={<CheckCircle2 size={20} />} label="Reminder" value="Email" hint="push nella versione futura" />
         </section>
+
+        <section className="how-it-works">
+  <div className="section-heading">
+    <h2>Come funziona</h2>
+    <p>Tre passaggi semplici per trasformare un documento in un promemoria.</p>
+  </div>
+
+  <div className="steps-grid">
+    <div className="step-card">
+      <span>1</span>
+      <h3>Carica</h3>
+      <p>PDF, foto o testo copiato da una mail.</p>
+    </div>
+
+    <div className="step-card">
+      <span>2</span>
+      <h3>Controlla</h3>
+      <p>ScadenzeFacili propone data, importo e categoria automaticamente.</p>
+    </div>
+
+    <div className="step-card">
+      <span>3</span>
+      <h3>Ricorda</h3>
+      <p>Salvi la scadenza e ricevi il reminder al momento giusto.</p>
+    </div>
+  </div>
+</section>
+
+<section className="beta-section">
+  <div>
+    <h2>Vuoi provare la beta?</h2>
+    <p>
+      Stiamo cercando i primi utenti per testare
+      ScadenzeFacili con scadenze reali.
+    </p>
+  </div>
+
+  <a
+    className="beta-button"
+    href="mailto:tuaemail@example.com?subject=Beta%20ScadenzeFacili"
+  >
+    Lascia la tua email
+  </a>
+</section>
 
         <section className="panel">
           <h2>Aggiungi manualmente</h2>
