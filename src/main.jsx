@@ -123,9 +123,9 @@ function App() {
   <h2>Carica un PDF o una foto.</h2>
 
   <p>
-    Trascina un PDF qui oppure carica un documento.
-    ScadenzeFacili trova data, importo e categoria automaticamente.
-  </p>
+  ScadenzeFacili trova data, importo e categoria automaticamente.
+  Tu controlli e salvi la scadenza.
+</p>
 
   <div className="actions">
     <button
@@ -146,7 +146,7 @@ function App() {
   </div>
 
   <small>
-    Trascina un file oppure carica un documento manualmente.
+  Puoi cliccare sul bottone o trascinare un file in quest’area.
   </small>
 </div>
 
