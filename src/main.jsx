@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Upload, Mail, ShieldCheck, Sparkles, CalendarDays, FileText, CheckCircle2, Plus, Trash2 } from 'lucide-react';
 import './styles.css';
+import { supabase } from './supabase';
 
 const initialDeadlines = [
   { id: 1, title: 'Bolletta luce', provider: 'Enel Energia', category: 'Casa', dueDate: '2026-06-14', amount: 87.4 },
@@ -29,6 +30,32 @@ function App() {
   const [manualTitle, setManualTitle] = useState('');
   const [manualDate, setManualDate] = useState('');
   const [manualAmount, setManualAmount] = useState('');
+  useEffect(() => {
+  async function loadDeadlines() {
+    const { data, error } = await supabase
+      .from('deadlines')
+      .select('*')
+      .order('due_date', { ascending: true });
+
+    if (error) {
+      console.error('Errore caricamento Supabase:', error);
+      return;
+    }
+
+    const dbDeadlines = data.map((item) => ({
+      id: `db-${item.id}`,
+      title: item.title,
+      provider: item.provider,
+      category: item.category,
+      dueDate: item.due_date,
+      amount: item.amount === null ? null : Number(item.amount),
+    }));
+
+    setDeadlines(dbDeadlines);
+  }
+
+  loadDeadlines();
+}, []);
 
   const monthTotal = useMemo(() => deadlines.reduce((sum, item) => sum + (Number(item.amount) || 0), 0), [deadlines]);
   const nextSevenDays = useMemo(() => deadlines.filter((item) => new Date(item.dueDate) <= new Date('2026-06-29')).length, [deadlines]);
@@ -42,13 +69,46 @@ function App() {
     insight: 'Questa sembra una bolletta ricorrente. Potresti voler ricevere un promemoria ogni 2 mesi.',
   };
 
-  function saveExtracted() {
-    const { insight, ...deadline } = extracted;
-    setDeadlines([{ id: Date.now(), ...deadline }, ...deadlines]);
-    setShowExtraction(false);
-    setShowEmailPaste(false);
-    setEmailText('');
+async function saveExtracted() {
+  const { insight, dueDate, ...rest } = extracted;
+
+  const deadline = {
+    title: rest.title,
+    provider: rest.provider,
+    category: rest.category,
+    due_date: dueDate,
+    amount: rest.amount,
+  };
+
+  const { data, error } = await supabase
+    .from('deadlines')
+    .insert([deadline])
+    .select();
+
+  if (error) {
+    console.error('Errore salvataggio Supabase:', error);
+    alert('Errore nel salvataggio. Controlla la console.');
+    return;
   }
+
+  const saved = data[0];
+
+  setDeadlines([
+    {
+      id: `db-${saved.id}`,
+      title: saved.title,
+      provider: saved.provider,
+      category: saved.category,
+      dueDate: saved.due_date,
+      amount: Number(saved.amount),
+    },
+    ...deadlines,
+  ]);
+
+  setShowExtraction(false);
+  setShowEmailPaste(false);
+  setEmailText('');
+}
 
   function saveManual() {
     if (!manualTitle || !manualDate) return;
@@ -206,6 +266,72 @@ function App() {
     </div>
   </section>
 )}
+
+<section className="benefits">
+  <div className="benefit-card">
+    <h3>Mai più dimenticanze</h3>
+    <p>
+      Bollo, assicurazione, bollette e documenti sempre sotto controllo.
+    </p>
+  </div>
+
+  <div className="benefit-card">
+    <h3>Nessun inserimento manuale</h3>
+    <p>
+      Carichi un PDF o una foto e ScadenzeFacili trova automaticamente i dati.
+    </p>
+  </div>
+
+  <div className="benefit-card">
+    <h3>Privacy semplice</h3>
+    <p>
+      Puoi eliminare il documento subito dopo l’estrazione.
+    </p>
+  </div>
+</section>
+
+<section className="roadmap">
+  <div className="roadmap-header">
+    <h2>Roadmap beta</h2>
+    <p>
+      Stiamo costruendo ScadenzeFacili insieme ai primi utenti.
+    </p>
+  </div>
+
+  <div className="roadmap-grid">
+    <div className="roadmap-item done">
+      <span>✓</span>
+      <div>
+        <strong>Upload PDF e foto</strong>
+        <p>Carica documenti e trova automaticamente le scadenze.</p>
+      </div>
+    </div>
+
+    <div className="roadmap-item done">
+      <span>✓</span>
+      <div>
+        <strong>Estrazione automatica</strong>
+        <p>Data, importo e categoria riconosciuti automaticamente.</p>
+      </div>
+    </div>
+
+    <div className="roadmap-item">
+      <span>🔜</span>
+      <div>
+        <strong>Reminder WhatsApp</strong>
+        <p>Ricevi notifiche automatiche prima della scadenza.</p>
+      </div>
+    </div>
+
+    <div className="roadmap-item">
+      <span>🔜</span>
+      <div>
+        <strong>Calendario famiglia</strong>
+        <p>Gestisci le scadenze di tutta la famiglia in un unico posto.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
         <section className="stats">
           <Stat icon={<CalendarDays size={20} />} label="Prossimi 7 giorni" value={nextSevenDays} hint="scadenze da controllare" />
