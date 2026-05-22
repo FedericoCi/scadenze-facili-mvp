@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Upload, Mail, ShieldCheck, Sparkles, CalendarDays, FileText, CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import { Upload, Mail, ShieldCheck, Sparkles, CalendarDays, FileText, CheckCircle2, Plus, Trash2, Pencil } from 'lucide-react';
 import './styles.css';
 import { supabase } from './supabase';
 
@@ -30,6 +30,9 @@ function App() {
   const [manualTitle, setManualTitle] = useState('');
   const [manualDate, setManualDate] = useState('');
   const [manualAmount, setManualAmount] = useState('');
+  const [editingDeadline, setEditingDeadline] = useState(null);
+  const fileInputRef = useRef(null);
+
   useEffect(() => {
   async function loadDeadlines() {
     const { data, error } = await supabase
@@ -128,7 +131,7 @@ async function saveExtracted() {
     setManualAmount('');
   }
 
-  async function deleteDeadline(id) {
+async function deleteDeadline(id) {
   const dbId = String(id).replace('db-', '');
 
   const { error } = await supabase
@@ -144,6 +147,50 @@ async function saveExtracted() {
 
   setDeadlines(deadlines.filter((item) => item.id !== id));
 }
+
+async function updateDeadline() {
+  if (!editingDeadline) return;
+
+  const dbId = String(editingDeadline.id).replace('db-', '');
+
+  const { error } = await supabase
+    .from('deadlines')
+    .update({
+      title: editingDeadline.title,
+      provider: editingDeadline.provider,
+      category: editingDeadline.category,
+      due_date: editingDeadline.dueDate,
+      amount:
+        editingDeadline.amount === ''
+          ? null
+          : Number(editingDeadline.amount),
+    })
+    .eq('id', dbId);
+
+  if (error) {
+    console.error('Errore modifica Supabase:', error);
+    alert('Errore durante la modifica.');
+    return;
+  }
+
+  setDeadlines(
+    deadlines.map((item) =>
+      item.id === editingDeadline.id
+        ? {
+            ...editingDeadline,
+            amount:
+              editingDeadline.amount === ''
+                ? null
+                : Number(editingDeadline.amount),
+          }
+        : item
+    )
+  );
+
+  setEditingDeadline(null);
+}
+
+
 
   function startFakeAnalysis(fileName = 'bolletta-luce.pdf') {
   setUploadedFileName(fileName);
@@ -185,6 +232,20 @@ async function saveExtracted() {
     startFakeAnalysis(file?.name || 'documento.pdf');
   }}
 >
+
+<input
+  ref={fileInputRef}
+  type="file"
+  accept=".pdf,image/*"
+  style={{ display: 'none' }}
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      startFakeAnalysis(file.name);
+    }
+  }}
+/>
+
           <div className="upload-copy">
   <div className="badge">
     <Sparkles size={16} />
@@ -203,7 +264,7 @@ async function saveExtracted() {
   <div className="actions">
     <button
       className="primary"
-      onClick={() => startFakeAnalysis('bolletta-gas.pdf')}
+      onClick={() => fileInputRef.current?.click()}
     >
       <Upload size={20} />
       Carica documento
@@ -408,6 +469,72 @@ async function saveExtracted() {
           </div>
         </section>
 
+{editingDeadline && (
+  <section className="panel">
+    <h2>Modifica scadenza</h2>
+
+    <div className="manual-grid">
+      <input
+        placeholder="Titolo"
+        value={editingDeadline.title}
+        onChange={(e) =>
+          setEditingDeadline({
+            ...editingDeadline,
+            title: e.target.value,
+          })
+        }
+      />
+
+      <input
+        placeholder="Fornitore"
+        value={editingDeadline.provider}
+        onChange={(e) =>
+          setEditingDeadline({
+            ...editingDeadline,
+            provider: e.target.value,
+          })
+        }
+      />
+
+      <input
+        type="date"
+        value={editingDeadline.dueDate}
+        onChange={(e) =>
+          setEditingDeadline({
+            ...editingDeadline,
+            dueDate: e.target.value,
+          })
+        }
+      />
+
+      <input
+        type="number"
+        placeholder="Importo"
+        value={editingDeadline.amount ?? ''}
+        onChange={(e) =>
+          setEditingDeadline({
+            ...editingDeadline,
+            amount: e.target.value,
+          })
+        }
+      />
+    </div>
+
+    <div className="actions edit-actions">
+      <button className="primary" onClick={updateDeadline}>
+        Salva modifiche
+      </button>
+
+      <button
+        className="secondary"
+        onClick={() => setEditingDeadline(null)}
+      >
+        Annulla
+      </button>
+    </div>
+  </section>
+)}
+
         <section className="panel">
           <h2>Scadenze salvate</h2>
           <div className="deadline-list">
@@ -419,8 +546,22 @@ async function saveExtracted() {
                 </div>
                 <div className="deadline-actions">
                   <strong>{formatAmount(item.amount)}</strong>
-                  <button className="icon-button" onClick={() => deleteDeadline(item.id)} aria-label="Elimina scadenza"><Trash2 size={16} /></button>
-                </div>
+<button
+  className="icon-button"
+  onClick={() => setEditingDeadline(item)}
+  aria-label="Modifica scadenza"
+>
+  <Pencil size={16} />
+</button>
+
+<button
+  className="icon-button"
+  onClick={() => deleteDeadline(item.id)}
+  aria-label="Elimina scadenza"
+>
+  <Trash2 size={16} />
+</button>                
+              </div>
               </article>
             ))}
           </div>
