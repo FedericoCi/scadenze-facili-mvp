@@ -199,3 +199,27 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     transform: rotate(360deg);
   }
 }
+
+.upload-card.dragging {
+  border-color: #0f172a;
+  background: #f1f5f9;
+  transform: scale(1.01);
+}
+
+.file-preview {
+  margin: 8px 0 0;
+  color: #64748b;
+}
+
+.file-preview strong {
+  color: #0f172a;
+}
+
+.upload-hints {
+  display: grid;
+  gap: 6px;
+}
+
+.upload-hints small {
+  color: #64748b;
+}

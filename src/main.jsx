@@ -22,6 +22,8 @@ function App() {
   const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [showExtraction, setShowExtraction] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState('');
   const [showEmailPaste, setShowEmailPaste] = useState(false);
   const [emailText, setEmailText] = useState('');
   const [manualTitle, setManualTitle] = useState('');
@@ -70,6 +72,17 @@ function App() {
     setDeadlines(deadlines.filter((item) => item.id !== id));
   }
 
+  function startFakeAnalysis(fileName = 'bolletta-luce.pdf') {
+  setUploadedFileName(fileName);
+  setShowExtraction(false);
+  setIsAnalyzing(true);
+
+  setTimeout(() => {
+    setIsAnalyzing(false);
+    setShowExtraction(true);
+  }, 2200);
+}
+
   return (
     <main className="page">
       <div className="shell">
@@ -84,38 +97,67 @@ function App() {
           <div className="trust-pill"><ShieldCheck size={16} /> Documento eliminabile dopo l'estrazione</div>
         </header>
 
-        <section className="upload-card">
-          <div className="upload-copy">
-            <div className="badge"><Sparkles size={16} /> Da documento a promemoria</div>
-            <h2>Carica un PDF o una foto.</h2>
-            <p>Troviamo data, importo e categoria. Tu controlli e salvi la scadenza.</p>
-            <div className="actions">
-              <button
-  className="primary"
-  onClick={() => {
-    setIsAnalyzing(true);
+        <section
+  className={`upload-card ${isDragging ? 'dragging' : ''}`}
+  onDragOver={(e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }}
+  onDragLeave={() => setIsDragging(false)}
+  onDrop={(e) => {
+    e.preventDefault();
+    setIsDragging(false);
 
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setShowExtraction(true);
-    }, 2200);
+    const file = e.dataTransfer.files?.[0];
+    startFakeAnalysis(file?.name || 'documento.pdf');
   }}
 >
-  <Upload size={20} />
-  Carica documento
-</button>
-              <button className="secondary" onClick={() => setShowEmailPaste(!showEmailPaste)}><Mail size={20} /> Incolla testo mail</button>
-            </div>
-            <small>Puoi salvare solo la scadenza ed eliminare il documento subito dopo.</small>
-          </div>
-          <div className="examples">
-            <h3>Cosa puoi caricare?</h3>
-            <div>Bolletta luce, gas o internet</div>
-            <div>Assicurazione auto o casa</div>
-            <div>Revisione, bollo o tagliando</div>
-            <div>Documento, garanzia o abbonamento</div>
-          </div>
-        </section>
+          <div className="upload-copy">
+  <div className="badge">
+    <Sparkles size={16} />
+    {isDragging
+      ? 'Rilascia il documento qui'
+      : 'Da documento a promemoria'}
+  </div>
+
+  <h2>Carica un PDF o una foto.</h2>
+
+  <p>
+    Trascina un PDF qui oppure carica un documento.
+    ScadenzeFacili trova data, importo e categoria automaticamente.
+  </p>
+
+  <div className="actions">
+    <button
+      className="primary"
+      onClick={() => startFakeAnalysis('bolletta-gas.pdf')}
+    >
+      <Upload size={20} />
+      Carica documento
+    </button>
+
+    <button
+      className="secondary"
+      onClick={() => setShowEmailPaste(!showEmailPaste)}
+    >
+      <Mail size={20} />
+      Incolla testo mail
+    </button>
+  </div>
+
+  <small>
+    Trascina un file oppure carica un documento manualmente.
+  </small>
+</div>
+
+<div className="examples">
+  <h3>Cosa puoi caricare?</h3>
+  <div>Bolletta luce, gas o internet</div>
+  <div>Assicurazione auto o casa</div>
+  <div>Revisione, bollo o tagliando</div>
+  <div>Documento, garanzia o abbonamento</div>
+</div>
+</section>
 
         {showEmailPaste && (
           <section className="panel">
@@ -131,6 +173,10 @@ function App() {
     <div className="analyzing-spinner"></div>
 
     <h2>Analizzo il documento...</h2>
+
+          <p className="file-preview">
+  Documento caricato: <strong>{uploadedFileName}</strong>
+</p>
 
     <div className="analyzing-steps">
       <div>✓ Lettura PDF completata</div>
@@ -203,12 +249,14 @@ function App() {
     </p>
   </div>
 
-  <a
-    className="beta-button"
-    href="mailto:tuaemail@example.com?subject=Beta%20ScadenzeFacili"
-  >
-    Lascia la tua email
-  </a>
+ <a
+  className="beta-button"
+  href="https://tally.so/r/obkGNe"
+  target="_blank"
+  rel="noreferrer"
+>
+  Entra nella beta
+</a>
 </section>
 
         <section className="panel">
