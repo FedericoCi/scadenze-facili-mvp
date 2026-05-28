@@ -1,5 +1,13 @@
 import pdf from 'pdf-parse';
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+import pdf from 'pdf-parse';
+
 function normalizeAmount(value) {
   if (!value) return null;
   return Number(value.replace('.', '').replace(',', '.'));
