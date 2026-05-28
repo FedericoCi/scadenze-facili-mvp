@@ -11,7 +11,19 @@ const initialDeadlines = [
 ];
 
 function formatDate(date) {
-  return new Intl.DateTimeFormat('it-IT', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(date));
+  if (!date) return 'Data non trovata';
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return 'Data non valida';
+  }
+
+  return new Intl.DateTimeFormat('it-IT', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(parsedDate);
 }
 
 function formatAmount(amount) {
