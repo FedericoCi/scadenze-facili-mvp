@@ -44,6 +44,7 @@ function App() {
   const [manualDate, setManualDate] = useState('');
   const [manualAmount, setManualAmount] = useState('');
   const [editingDeadline, setEditingDeadline] = useState(null);
+  const [deadlineToDelete, setDeadlineToDelete] = useState(null);
   const [session, setSession] = useState(null);
   const [authEmail, setAuthEmail] = useState('');
   const [showLogin, setShowLogin] = useState(false);
@@ -723,6 +724,41 @@ async function signOut() {
   </section>
 )}
 
+{deadlineToDelete && (
+  <div className="modal-backdrop">
+    <div className="login-modal">
+
+      <h2>Eliminare la scadenza?</h2>
+
+      <p>
+        Questa azione non può essere annullata.
+      </p>
+
+      <div className="actions">
+
+        <button
+          className="ghost"
+          onClick={() => setDeadlineToDelete(null)}
+        >
+          Annulla
+        </button>
+
+        <button
+          className="primary"
+          onClick={() => {
+            deleteDeadline(deadlineToDelete.id);
+            setDeadlineToDelete(null);
+          }}
+        >
+          Elimina
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
+
         <section className="panel">
 
   <h2>Scadenze salvate</h2>
@@ -779,7 +815,7 @@ async function signOut() {
 
               <button
                 className="icon-button"
-                onClick={() => deleteDeadline(item.id)}
+                onClick={() => setDeadlineToDelete(item)}
                 aria-label="Elimina scadenza"
               >
                 <Trash2 size={16} />
