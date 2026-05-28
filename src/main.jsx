@@ -178,6 +178,51 @@ setTimeout(() => {
   setShowExtraction(true);
 }
 
+async function analyzePdfFile(file) {
+  if (!file) return;
+
+  setUploadedFileName(file.name);
+  setIsAnalyzing(true);
+  setShowExtraction(false);
+
+  setAnalysisSteps(['Caricamento PDF avviato']);
+
+  setTimeout(() => {
+    setAnalysisSteps((steps) => [...steps, 'Lettura testo dal PDF']);
+  }, 800);
+
+  const response = await fetch('/api/parse-pdf', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/pdf',
+    },
+    body: file,
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error(data);
+    showToast('Errore durante la lettura del PDF.', 'error');
+    setIsAnalyzing(false);
+    return;
+  }
+
+  setExtracted({
+    title: data.result.title || 'Scadenza',
+    provider: data.result.provider || 'Fornitore non trovato',
+    category: data.result.category || 'Altro',
+    dueDate: data.result.dueDate,
+    amount: data.result.amount ?? null,
+    insight: 'Dati estratti automaticamente dal PDF.',
+  });
+
+  setAnalysisSteps((steps) => [...steps, 'Dati estratti dal PDF']);
+
+  setIsAnalyzing(false);
+  setShowExtraction(true);
+}
+
 async function saveExtracted() {
 
   if (!session) {
