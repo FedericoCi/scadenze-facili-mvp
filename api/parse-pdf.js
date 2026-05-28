@@ -64,15 +64,30 @@ export default async function handler(req, res) {
     const provider = detectProvider(text);
     const category = detectCategory(text);
 
-    return res.status(200).json({
-      result: {
-        title: `Conto ${provider}`,
-        provider,
-        category,
-        dueDate: toIsoDate(dueDateMatch?.[1]),
-        amount: normalizeAmount(amountMatch?.[1]),
-      },
-    });
+    const dueDate = toIsoDate(dueDateMatch?.[1]);
+const amount = normalizeAmount(amountMatch?.[1]);
+
+if (!dueDate && !amount && provider === 'Fornitore non trovato') {
+  return res.status(200).json({
+    result: {
+      title: 'Dati non trovati',
+      provider: 'Fornitore non trovato',
+      category: 'Altro',
+      dueDate: '',
+      amount: null,
+    },
+  });
+}
+
+return res.status(200).json({
+  result: {
+    title: `Conto ${provider}`,
+    provider,
+    category,
+    dueDate,
+    amount,
+  },
+});
   } catch (error) {
     console.error(error);
 
