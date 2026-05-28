@@ -52,6 +52,7 @@ function App() {
   const [isSavingManual, setIsSavingManual] = useState(false);
   const [isSavingExtracted, setIsSavingExtracted] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [analysisSteps, setAnalysisSteps] = useState([]);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -102,14 +103,68 @@ function App() {
   const monthTotal = useMemo(() => deadlines.reduce((sum, item) => sum + (Number(item.amount) || 0), 0), [deadlines]);
   const nextSevenDays = useMemo(() => deadlines.filter((item) => new Date(item.dueDate) <= new Date('2026-06-29')).length, [deadlines]);
 
-  const extracted = {
-    title: 'Bolletta gas',
-    provider: 'Hera Comm',
-    category: 'Casa',
-    dueDate: '2026-06-22',
-    amount: 96.8,
-    insight: 'Questa sembra una bolletta ricorrente. Potresti voler ricevere un promemoria ogni 2 mesi.',
-  };
+  const [extracted, setExtracted] = useState({
+  title: 'Bolletta gas',
+  provider: 'Hera Comm',
+  category: 'Casa',
+  dueDate: '2026-06-22',
+  amount: 96.8,
+  insight: 'Questa sembra una bolletta ricorrente. Potresti voler ricevere un promemoria ogni 2 mesi.',
+});
+
+async function analyzeEmailText() {
+  if (!emailText.trim()) {
+    showToast('Incolla prima il testo della mail.', 'error');
+    return;
+  }
+
+  setIsAnalyzing(true);
+  setShowExtraction(false);
+
+  setAnalysisSteps(['Lettura testo avviata']);
+
+setTimeout(() => {
+  setAnalysisSteps((steps) => [...steps, 'Invio all’AI']);
+}, 800);
+
+setTimeout(() => {
+  setAnalysisSteps((steps) => [...steps, 'Ricerca data, importo e fornitore']);
+}, 1800);
+
+  const response = await fetch('/api/extract-deadline', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text: emailText,
+    }),
+  });
+
+  const data = await response.json();
+
+  setAnalysisSteps((steps) => [...steps, 'Risposta ricevuta']);
+
+  if (!response.ok) {
+    console.error(data);
+    showToast('Errore durante l’analisi.', 'error');
+    setIsAnalyzing(false);
+    return;
+  }
+
+  setExtracted({
+  title: data.result.title || 'Scadenza',
+  provider: data.result.provider || 'Fornitore non trovato',
+  category: data.result.category || 'Altro',
+  dueDate: data.result.dueDate,
+  amount: data.result.amount ?? null,
+  insight: 'Dati estratti automaticamente dal testo della mail.',
+});
+
+  setIsAnalyzing(false);
+  setAnalysisSteps((steps) => [...steps, 'Dati pronti da controllare']);
+  setShowExtraction(true);
+}
 
 async function saveExtracted() {
 
@@ -492,7 +547,9 @@ async function signOut() {
             <h2>Incolla testo da una mail</h2>
             <p>Per esempio una comunicazione di pagamento, rinnovo o scadenza.</p>
             <textarea placeholder="Incolla qui il testo della mail..." value={emailText} onChange={(e) => setEmailText(e.target.value)} />
-            <button className="primary small" onClick={() => setShowExtraction(true)}>Analizza testo</button>
+            <button className="primary small" onClick={analyzeEmailText}>
+              Analizza testo
+            </button>
           </section>
         )}
 
@@ -507,11 +564,14 @@ async function signOut() {
 </p>
 
     <div className="analyzing-steps">
-      <div>✓ Lettura PDF completata</div>
-      <div>✓ Data scadenza trovata</div>
-      <div>✓ Importo identificato</div>
-      <div>✓ Categoria classificata</div>
-    </div>
+  {analysisSteps.map((step) => (
+    <div key={step}>✓ {step}</div>
+  ))}
+
+  {analysisSteps.length < 5 && (
+    <div className="pending-step">Analisi in corso...</div>
+  )}
+</div>
   </section>
 )}
 

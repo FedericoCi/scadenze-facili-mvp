@@ -56,11 +56,26 @@ Esempio:
     const data = await response.json();
 
     const content =
-      data.choices?.[0]?.message?.content || '{}';
+  data.choices?.[0]?.message?.content || '{}';
 
-    return res.status(200).json({
-      result: JSON.parse(content),
-    });
+console.log(content);
+
+let parsed;
+
+try {
+  parsed = JSON.parse(content);
+} catch (e) {
+  console.error('JSON parse error:', content);
+
+  return res.status(500).json({
+    error: 'Invalid AI response',
+    raw: content,
+  });
+}
+
+return res.status(200).json({
+  result: parsed,
+});
 
   } catch (error) {
 
