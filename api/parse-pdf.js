@@ -54,6 +54,7 @@ export default async function handler(req, res) {
     const pdfData = await pdf(buffer);
 
     const text = pdfData.text;
+    console.log('PDF TEXT:', text.slice(0, 2000));
 
     const dueDateMatch =
       text.match(/data\s+di\s+scadenza\s+(\d{2}\/\d{2}\/\d{4})/i);
@@ -75,6 +76,7 @@ if (!dueDate && !amount && provider === 'Fornitore non trovato') {
       category: 'Altro',
       dueDate: '',
       amount: null,
+      debugText: text.slice(0, 500),
     },
   });
 }

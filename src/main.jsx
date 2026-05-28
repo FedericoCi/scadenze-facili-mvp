@@ -116,12 +116,12 @@ function App() {
   const nextSevenDays = useMemo(() => deadlines.filter((item) => new Date(item.dueDate) <= new Date('2026-06-29')).length, [deadlines]);
 
   const [extracted, setExtracted] = useState({
-  title: 'Bolletta gas',
-  provider: 'Hera Comm',
-  category: 'Casa',
-  dueDate: '2026-06-22',
-  amount: 96.8,
-  insight: 'Questa sembra una bolletta ricorrente. Potresti voler ricevere un promemoria ogni 2 mesi.',
+  title: '',
+  provider: '',
+  category: 'Altro',
+  dueDate: '',
+  amount: null,
+  insight: '',
 });
 
 async function analyzeEmailText() {
@@ -543,7 +543,7 @@ function showToast(message, type = 'success') {
     setIsDragging(false);
 
     const file = e.dataTransfer.files?.[0];
-    startFakeAnalysis(file?.name || 'documento.pdf');
+    analyzePdfFile(file);
   }}
 >
 
@@ -555,8 +555,8 @@ function showToast(message, type = 'success') {
   onChange={(e) => {
     const file = e.target.files?.[0];
     if (file) {
-      startFakeAnalysis(file.name);
-    }
+      analyzePdfFile(file);
+              }
   }}
 />
 
