@@ -393,6 +393,14 @@ async function signOut() {
   showToast('Logout effettuato.');
 }
 
+function showToast(message, type = 'success') {
+  setToast({ message, type });
+
+  setTimeout(() => {
+    setToast(null);
+  }, 3000);
+}
+
 
 
   function startFakeAnalysis(fileName = 'bolletta-luce.pdf') {
