@@ -153,7 +153,16 @@ setTimeout(() => {
     }),
   });
 
-  const data = await response.json();
+  let data;
+
+try {
+  data = await response.json();
+} catch (error) {
+  console.error('Risposta non JSON:', error);
+  showToast('Errore tecnico durante la lettura del PDF.', 'error');
+  setIsAnalyzing(false);
+  return;
+}
 
   setAnalysisSteps((steps) => [...steps, 'Risposta ricevuta']);
 
@@ -199,7 +208,18 @@ async function analyzePdfFile(file) {
     body: file,
   });
 
-  const data = await response.json();
+  const raw = await response.text();
+
+let data;
+
+try {
+  data = JSON.parse(raw);
+} catch (error) {
+  console.error('Risposta non JSON:', raw);
+  showToast('Errore tecnico durante la lettura del PDF.', 'error');
+  setIsAnalyzing(false);
+  return;
+}
 
   if (!response.ok) {
     console.error(data);
