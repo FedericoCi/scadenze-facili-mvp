@@ -317,3 +317,143 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
 .edit-actions {
   margin-top: 18px;
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-state {
+  border: 2px dashed #cbd5e1;
+  border-radius: 24px;
+  padding: 40px 24px;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.empty-state h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-box span {
+  font-size: 14px;
+  color: #475569;
+}
+
+.login-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.login-panel h2 {
+  margin: 0 0 8px;
+}
+
+.login-panel p {
+  margin: 0;
+  color: #64748b;
+}
+
+.login-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+}
+
+@media (max-width: 820px) {
+  .login-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.login-modal {
+  width: min(460px, 100%);
+  background: white;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+}
+
+.login-modal h2 {
+  margin: 0 0 8px;
+}
+
+.login-modal p {
+  margin: 0 0 18px;
+  color: #64748b;
+}
+
+.login-modal input {
+  margin-bottom: 16px;
+}
+
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 80;
+  background: #0f172a;
+  color: white;
+  padding: 14px 18px;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
+  font-weight: 700;
+}
+
+.toast.error {
+  background: #991b1b;
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 6px;
+}
+
+.category.casa {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.category.auto {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.category.documenti {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.category.altro {
+  background: #e2e8f0;
+  color: #334155;
+}

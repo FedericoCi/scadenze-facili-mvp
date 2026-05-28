@@ -19,6 +19,19 @@ function formatAmount(amount) {
   return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(amount);
 }
 
+function getCategoryClass(category) {
+  switch (category) {
+    case 'Casa':
+      return 'category casa';
+    case 'Auto':
+      return 'category auto';
+    case 'Documenti':
+      return 'category documenti';
+    default:
+      return 'category altro';
+  }
+}
+
 function App() {
   const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [showExtraction, setShowExtraction] = useState(false);
@@ -33,24 +46,24 @@ function App() {
   const [editingDeadline, setEditingDeadline] = useState(null);
   const [session, setSession] = useState(null);
   const [authEmail, setAuthEmail] = useState('');
+  const [showLogin, setShowLogin] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [isSavingManual, setIsSavingManual] = useState(false);
+  const [isSavingExtracted, setIsSavingExtracted] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+  async function loadDeadlines(userId) {
+    if (!userId) {
+      setDeadlines([]);
+      return;
+    }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-  setSession(session);
-});
-
-const {
-  data: { subscription },
-} = supabase.auth.onAuthStateChange((_event, session) => {
-  setSession(session);
-});
-
-  async function loadDeadlines() {
     const { data, error } = await supabase
       .from('deadlines')
       .select('*')
+      .eq('user_id', userId)
       .order('due_date', { ascending: true });
 
     if (error) {
@@ -70,7 +83,18 @@ const {
     setDeadlines(dbDeadlines);
   }
 
-  loadDeadlines();
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session);
+    loadDeadlines(session?.user?.id);
+  });
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+    loadDeadlines(session?.user?.id);
+  });
+
   return () => subscription.unsubscribe();
 }, []);
 
@@ -87,6 +111,8 @@ const {
   };
 
 async function saveExtracted() {
+
+  setIsSavingExtracted(true);
   const { insight, dueDate, ...rest } = extracted;
 
   const deadline = {
@@ -95,6 +121,7 @@ async function saveExtracted() {
     category: rest.category,
     due_date: dueDate,
     amount: rest.amount,
+    user_id: session?.user?.id,
   };
 
   const { data, error } = await supabase
@@ -104,7 +131,8 @@ async function saveExtracted() {
 
   if (error) {
     console.error('Errore salvataggio Supabase:', error);
-    alert('Errore nel salvataggio. Controlla la console.');
+    showToast('Errore nel salvataggio.', 'error');
+    setIsSavingExtracted(false);
     return;
   }
 
@@ -122,6 +150,9 @@ async function saveExtracted() {
     ...deadlines,
   ]);
 
+    showToast('Scadenza salvata.');
+    setIsSavingExtracted(false);
+
   setShowExtraction(false);
   setShowEmailPaste(false);
   setEmailText('');
@@ -129,6 +160,7 @@ async function saveExtracted() {
 
   async function saveManual() {
   if (!manualTitle || !manualDate) return;
+    setIsSavingManual(true);
 
   const deadline = {
     title: manualTitle,
@@ -136,6 +168,7 @@ async function saveExtracted() {
     category: 'Altro',
     due_date: manualDate,
     amount: manualAmount ? Number(manualAmount) : null,
+    user_id: session?.user?.id,
   };
 
   const { data, error } = await supabase
@@ -145,7 +178,8 @@ async function saveExtracted() {
 
   if (error) {
     console.error('Errore salvataggio manuale:', error);
-    alert('Errore durante il salvataggio.');
+    showToast('Errore durante il salvataggio.', 'error');
+    setIsSavingManual(false);
     return;
   }
 
@@ -163,6 +197,9 @@ async function saveExtracted() {
     ...deadlines,
   ]);
 
+    showToast('Scadenza aggiunta.');
+    setIsSavingManual(false);
+
   setManualTitle('');
   setManualDate('');
   setManualAmount('');
@@ -178,34 +215,15 @@ async function deleteDeadline(id) {
 
   if (error) {
     console.error('Errore eliminazione Supabase:', error);
-    alert('Errore durante eliminazione.');
+    showToast('Errore durante eliminazione.', 'error');
     return;
   }
 
   setDeadlines(deadlines.filter((item) => item.id !== id));
+  showToast('Scadenza eliminata.');
 }
 
 async function updateDeadline() {
-
-  async function signIn() {
-  if (!authEmail) return;
-
-  const { error } = await supabase.auth.signInWithOtp({
-    email: authEmail,
-  });
-
-  if (error) {
-    console.error(error);
-    alert('Errore login');
-    return;
-  }
-
-  alert('Controlla la tua email per il link di accesso.');
-}
-
-async function signOut() {
-  await supabase.auth.signOut();
-}
 
   if (!editingDeadline) return;
 
@@ -248,6 +266,43 @@ async function signOut() {
   setEditingDeadline(null);
 }
 
+async function signIn() {
+  if (!authEmail) return;
+  setIsSigningIn(true);
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: authEmail,
+    options: {
+      emailRedirectTo: window.location.origin,
+    },
+  });
+
+  if (error) {
+    console.error(error);
+
+    if (error.message.includes('rate limit')) {
+      showToast(
+  'Hai richiesto troppi link di accesso. Riprova tra circa 1 ora.',
+  'error'
+);
+    } else {
+      showToast(error.message, 'error');
+    }
+
+    setIsSigningIn(false);
+    return;
+  }
+
+  showToast('Controlla la tua email per il link di accesso.');
+  setIsSigningIn(false);
+  setShowLogin(false);
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+  showToast('Logout effettuato.');
+}
+
 
 
   function startFakeAnalysis(fileName = 'bolletta-luce.pdf') {
@@ -263,6 +318,13 @@ async function signOut() {
 
   return (
     <main className="page">
+
+      {toast && (
+  <div className={`toast ${toast.type}`}>
+    {toast.message}
+  </div>
+)}
+
       <div className="shell">
         <header className="header">
           <div>
@@ -272,8 +334,59 @@ async function signOut() {
 </div>
 <p>Non dimenticare più bollette, bolli e documenti.</p>
           </div>
-          <div className="trust-pill"><ShieldCheck size={16} /> Documento eliminabile dopo l'estrazione</div>
+          <div className="header-actions">
+
+{!session ? (
+  <button className="secondary" onClick={() => setShowLogin(true)}>
+  Accedi
+</button>
+) : (
+  <div className="user-box">
+    <span>{session.user.email}</span>
+    <button className="secondary" onClick={signOut}>
+      Logout
+    </button>
+  </div>
+)}
+
+  <div className="trust-pill">
+    <ShieldCheck size={16} />
+    Documento eliminabile dopo l'estrazione
+  </div>
+
+</div>
         </header>
+
+{showLogin && !session && (
+  <div className="modal-backdrop">
+    <div className="login-modal">
+      <h2>Accedi a ScadenzeFacili</h2>
+      <p>Ti invieremo un link sicuro per entrare senza password.</p>
+
+      <input
+        type="email"
+        placeholder="La tua email"
+        value={authEmail}
+        onChange={(e) => setAuthEmail(e.target.value)}
+      />
+
+      <div className="actions">
+        <button
+  className="primary"
+  onClick={signIn}
+  disabled={isSigningIn}
+>
+  {isSigningIn ? 'Invio...' : 'Ricevi link'}
+      </button>
+
+        <button className="ghost" onClick={() => setShowLogin(false)}>
+          Annulla
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
         <section
   className={`upload-card ${isDragging ? 'dragging' : ''}`}
@@ -392,7 +505,15 @@ async function signOut() {
     </div>
     <div className="smart-note"><strong>Nota smart:</strong> {extracted.insight}</div>
     <div className="actions">
-      <button className="primary" onClick={saveExtracted}>Conferma e salva</button>
+
+      <button
+  className="primary"
+  onClick={saveExtracted}
+  disabled={isSavingExtracted}
+>
+  {isSavingExtracted ? 'Salvataggio...' : 'Conferma e salva'}
+</button>
+
       <button className="secondary" onClick={() => setShowExtraction(false)}>Modifica</button>
       <button className="ghost" onClick={() => setShowExtraction(false)}>Scarta</button>
     </div>
@@ -523,7 +644,16 @@ async function signOut() {
             <input placeholder="Titolo" value={manualTitle} onChange={(e) => setManualTitle(e.target.value)} />
             <input type="date" value={manualDate} onChange={(e) => setManualDate(e.target.value)} />
             <input type="number" placeholder="Importo" value={manualAmount} onChange={(e) => setManualAmount(e.target.value)} />
-            <button className="primary" onClick={saveManual}><Plus size={16} /> Salva</button>
+            <button
+  className="primary"
+  onClick={saveManual}
+  disabled={isSavingManual}
+>
+  <>
+  <Plus size={16} />
+  {isSavingManual ? 'Salvataggio...' : 'Salva'}
+</>
+  </button>
           </div>
         </section>
 
@@ -594,36 +724,79 @@ async function signOut() {
 )}
 
         <section className="panel">
-          <h2>Scadenze salvate</h2>
-          <div className="deadline-list">
-            {deadlines.slice().sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)).map((item) => (
-              <article key={item.id} className="deadline-row">
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.provider} · {item.category} · {formatDate(item.dueDate)}</p>
-                </div>
-                <div className="deadline-actions">
-                  <strong>{formatAmount(item.amount)}</strong>
-<button
-  className="icon-button"
-  onClick={() => setEditingDeadline(item)}
-  aria-label="Modifica scadenza"
->
-  <Pencil size={16} />
-</button>
 
-<button
-  className="icon-button"
-  onClick={() => deleteDeadline(item.id)}
-  aria-label="Elimina scadenza"
->
-  <Trash2 size={16} />
-</button>                
-              </div>
-              </article>
-            ))}
-          </div>
-        </section>
+  <h2>Scadenze salvate</h2>
+
+  <div className="deadline-list">
+
+    {deadlines.length === 0 ? (
+
+      <div className="empty-state">
+
+        <h3>Nessuna scadenza salvata</h3>
+
+        <p>
+          Carica una bolletta, una revisione o aggiungi una
+          scadenza manualmente per iniziare.
+        </p>
+
+      </div>
+
+    ) : (
+
+      deadlines
+        .slice()
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+        .map((item) => (
+
+          <article key={item.id} className="deadline-row">
+
+            <div>
+              <h3>{item.title}</h3>
+
+              <p>
+  {item.provider} ·
+
+  <span className={getCategoryClass(item.category)}>
+    {item.category}
+  </span>
+
+  · {formatDate(item.dueDate)}
+              </p>
+            </div>
+
+            <div className="deadline-actions">
+
+              <strong>{formatAmount(item.amount)}</strong>
+
+              <button
+                className="icon-button"
+                onClick={() => setEditingDeadline(item)}
+                aria-label="Modifica scadenza"
+              >
+                <Pencil size={16} />
+              </button>
+
+              <button
+                className="icon-button"
+                onClick={() => deleteDeadline(item.id)}
+                aria-label="Elimina scadenza"
+              >
+                <Trash2 size={16} />
+              </button>
+
+            </div>
+
+          </article>
+
+        ))
+
+    )}
+
+  </div>
+
+</section>
+
       </div>
     </main>
   );
