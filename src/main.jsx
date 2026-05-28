@@ -113,6 +113,12 @@ function App() {
 
 async function saveExtracted() {
 
+  if (!session) {
+  showToast('Accedi per salvare le tue scadenze.', 'error');
+  setShowLogin(true);
+  return;
+}
+
   setIsSavingExtracted(true);
   const { insight, dueDate, ...rest } = extracted;
 
@@ -160,6 +166,13 @@ async function saveExtracted() {
 }
 
   async function saveManual() {
+
+  if (!session) {
+    showToast('Accedi per salvare le tue scadenze.', 'error');
+    setShowLogin(true);
+    return;
+  }
+
   if (!manualTitle || !manualDate) return;
     setIsSavingManual(true);
 
@@ -300,7 +313,16 @@ async function signIn() {
 }
 
 async function signOut() {
+  if (editingDeadline) {
+    const confirmLogout = confirm(
+      'Hai una modifica in corso. Vuoi uscire comunque?'
+    );
+
+    if (!confirmLogout) return;
+  }
+
   await supabase.auth.signOut();
+  setEditingDeadline(null);
   showToast('Logout effettuato.');
 }
 
