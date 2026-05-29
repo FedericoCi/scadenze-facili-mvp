@@ -1,5 +1,3 @@
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
-
 export const config = {
   api: {
     bodyParser: false,
@@ -16,25 +14,29 @@ export default async function handler(req, res) {
 
     const buffer = Buffer.concat(chunks);
 
-    const loadingTask = pdfjsLib.getDocument({
-      
-      data: new Uint8Array(buffer),
-      disableWorker: true,
-      useWorkerFetch: false,
-      isEvalSupported: false,
-      disableFontFace: true,
+    const formData = new FormData();
+
+    const blob = new Blob([buffer], {
+      type: 'application/pdf',
     });
 
-    const pdf = await loadingTask.promise;
+    formData.append('file', blob, 'document.pdf');
+    formData.append('apikey', process.env.OCR_SPACE_API_KEY);
+    formData.append('language', 'ita');
+    formData.append('isOverlayRequired', 'false');
 
-    let text = '';
+    const ocrResponse = await fetch(
+      'https://api.ocr.space/parse/image',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
 
-    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
-      const page = await pdf.getPage(pageNumber);
-      const content = await page.getTextContent();
+    const ocrData = await ocrResponse.json();
 
-      text += content.items.map((item) => item.str).join(' ');
-    }
+    const text =
+      ocrData?.ParsedResults?.[0]?.ParsedText || '';
 
     return res.status(200).json({
       result: {
@@ -43,12 +45,10 @@ export default async function handler(req, res) {
         category: 'Altro',
         dueDate: '',
         amount: null,
-        debugText: text.slice(0, 1000),
+        debugText: text.slice(0, 3000),
       },
     });
   } catch (error) {
-    console.error('PDFJS error:', error);
-
     return res.status(200).json({
       result: {
         title: 'PDF non leggibile',
