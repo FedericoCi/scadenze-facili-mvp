@@ -45,6 +45,26 @@ function getCategoryClass(category) {
   }
 }
 
+function getDeadlineStatus(date) {
+  const today = new Date();
+
+  const due = new Date(date);
+
+  const diffDays = Math.ceil(
+    (due - today) / (1000 * 60 * 60 * 24)
+  );
+
+  if (diffDays <= 7) {
+    return 'urgent';
+  }
+
+  if (diffDays <= 30) {
+    return 'warning';
+  }
+
+  return 'normal';
+}
+
 function App() {
   const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [showExtraction, setShowExtraction] = useState(false);
@@ -941,7 +961,10 @@ function showToast(message, type = 'success') {
         .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
         .map((item) => (
 
-          <article key={item.id} className="deadline-row">
+          <article
+  key={item.id}
+  className={`deadline-row ${getDeadlineStatus(item.dueDate)}`}
+>
 
             <div>
               <h3>{item.title}</h3>
