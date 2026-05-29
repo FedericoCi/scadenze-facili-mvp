@@ -138,11 +138,11 @@ async function analyzeEmailText() {
   setAnalysisSteps(['Lettura testo avviata']);
 
 setTimeout(() => {
-  setAnalysisSteps((steps) => [...steps, 'Invio all’AI']);
+  setAnalysisSteps((steps) => [...steps, 'Analisi del testo']);
 }, 800);
 
 setTimeout(() => {
-  setAnalysisSteps((steps) => [...steps, 'Ricerca data, importo e fornitore']);
+  setAnalysisSteps((steps) => [...steps, 'Ricerca scadenza, importo e fornitore']);
 }, 1800);
 
   const response = await fetch('/api/extract-deadline', {
@@ -181,7 +181,7 @@ try {
   category: data.result.category || 'Altro',
   dueDate: data.result.dueDate,
   amount: data.result.amount ?? null,
-  insight: 'Dati estratti automaticamente dal testo della mail.',
+  insight: 'Dati estratti automaticamente dal testo incollato.',
 });
 
   setIsAnalyzing(false);
@@ -466,19 +466,6 @@ function showToast(message, type = 'success') {
   setTimeout(() => {
     setToast(null);
   }, 3000);
-}
-
-
-
-  function startFakeAnalysis(fileName = 'bolletta-luce.pdf') {
-  setUploadedFileName(fileName);
-  setShowExtraction(false);
-  setIsAnalyzing(true);
-
-  setTimeout(() => {
-    setIsAnalyzing(false);
-    setShowExtraction(true);
-  }, 2200);
 }
 
   return (
