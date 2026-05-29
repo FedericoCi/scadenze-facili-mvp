@@ -214,6 +214,7 @@ let data;
 
 try {
   data = JSON.parse(raw);
+  console.log('PDF DEBUG:', data.result?.debugText);
 } catch (error) {
   console.error('Risposta non JSON:', raw);
   showToast('Errore tecnico durante la lettura del PDF.', 'error');
