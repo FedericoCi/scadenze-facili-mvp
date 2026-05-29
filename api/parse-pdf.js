@@ -43,18 +43,35 @@ export default async function handler(req, res) {
     ? 'WINDTRE'
     : 'Fornitore non trovato';
 
-const dueDateMatch = text.match(
-  /(\d{2}\/\d{2}\/\d{4})/g
-);
+function toIsoDate(value) {
+  if (!value) return '';
 
-const dueDate =
-  dueDateMatch?.[dueDateMatch.length - 1] || '';
+  const match = value.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (!match) return '';
 
-const amountMatch = text.match(
-  /Euro\s+([\d,]+)/i
-);
+  const [, day, month, year] = match;
+  return `${year}-${month}-${day}`;
+}
 
-const amount = amountMatch?.[1] || null;
+function normalizeAmount(value) {
+  if (!value) return null;
+
+  return Number(
+    value
+      .replace(/\./g, '')
+      .replace(',', '.')
+  );
+}
+
+const dueDateMatch =
+  text.match(/Data di scadenza[\s\S]*?(\d{2}\/\d{2}\/\d{4})/i);
+
+const amountMatch =
+  text.match(/Importo da pagare[\s\S]*?Euro\s*([\d.,]+)/i) ||
+  text.match(/Euro\s*([\d.,]+)/i);
+
+const dueDate = toIsoDate(dueDateMatch?.[1]);
+const amount = normalizeAmount(amountMatch?.[1]);
 
     return res.status(200).json({
   result: {
