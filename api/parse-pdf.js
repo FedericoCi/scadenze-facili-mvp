@@ -17,7 +17,9 @@ export default async function handler(req, res) {
     const buffer = Buffer.concat(chunks);
 
     const loadingTask = pdfjsLib.getDocument({
+      
       data: new Uint8Array(buffer),
+      disableWorker: true,
       useWorkerFetch: false,
       isEvalSupported: false,
       disableFontFace: true,
