@@ -1,9 +1,4 @@
-import { DOMMatrix, ImageData, Path2D } from 'canvas';
-
-globalThis.DOMMatrix = DOMMatrix;
-globalThis.ImageData = ImageData;
-globalThis.Path2D = Path2D;
-
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
 
 export const config = {
   api: {
@@ -21,8 +16,6 @@ export default async function handler(req, res) {
 
     const buffer = Buffer.concat(chunks);
 
-    const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
-
     const loadingTask = pdfjsLib.getDocument({
       data: new Uint8Array(buffer),
       useWorkerFetch: false,
@@ -34,7 +27,7 @@ export default async function handler(req, res) {
 
     let text = '';
 
-    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
       const page = await pdf.getPage(pageNumber);
       const content = await page.getTextContent();
 

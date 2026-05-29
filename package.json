@@ -7,9 +7,8 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",
     "@vitejs/plugin-react": "latest",
-    "canvas": "^3.2.3",
     "lucide-react": "latest",
-    "pdfjs-dist": "^5.7.284",
+    "pdfjs-dist": "^3.11.174",
     "react": "latest",
     "react-dom": "latest",
     "vite": "latest"
