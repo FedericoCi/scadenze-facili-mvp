@@ -1,3 +1,10 @@
+import { DOMMatrix, ImageData, Path2D } from 'canvas';
+
+globalThis.DOMMatrix = DOMMatrix;
+globalThis.ImageData = ImageData;
+globalThis.Path2D = Path2D;
+
+
 export const config = {
   api: {
     bodyParser: false,
