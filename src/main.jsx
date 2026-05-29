@@ -4,6 +4,7 @@ import { Upload, Mail, ShieldCheck, Sparkles, CalendarDays, FileText, CheckCircl
 import './styles.css';
 import { supabase } from './supabase';
 
+
 const initialDeadlines = [
   { id: 1, title: 'Bolletta luce', provider: 'Enel Energia', category: 'Casa', dueDate: '2026-06-14', amount: 87.4 },
   { id: 2, title: 'Assicurazione auto', provider: 'UnipolSai', category: 'Auto', dueDate: '2026-06-28', amount: 412 },
@@ -66,6 +67,7 @@ function App() {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [analysisSteps, setAnalysisSteps] = useState([]);
   const fileInputRef = useRef(null);
+
 
   useEffect(() => {
   async function loadDeadlines(userId) {
@@ -267,7 +269,7 @@ async function saveExtracted() {
   const { data, error } = await supabase
     .from('deadlines')
     .insert([deadline])
-    .select();
+    .select(); 
 
   if (error) {
     console.error('Errore salvataggio Supabase:', error);
@@ -289,7 +291,6 @@ async function saveExtracted() {
     },
     ...deadlines,
   ]);
-
     showToast('Scadenza salvata.');
     setIsSavingExtracted(false);
 
