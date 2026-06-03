@@ -474,3 +474,25 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
 .deadline-row.normal {
   border-left: 5px solid #22c55e;
 }
+
+.status-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.status-pill.urgent {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-pill.warning {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.status-pill.normal {
+  background: #dcfce7;
+  color: #15803d;
+}

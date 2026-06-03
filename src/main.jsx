@@ -47,7 +47,6 @@ function getCategoryClass(category) {
 
 function getDeadlineStatus(date) {
   const today = new Date();
-
   const due = new Date(date);
 
   const diffDays = Math.ceil(
@@ -63,6 +62,15 @@ function getDeadlineStatus(date) {
   }
 
   return 'normal';
+}
+
+function getDeadlineStatusLabel(date) {
+  const status = getDeadlineStatus(date);
+
+  if (status === 'urgent') return 'Urgente';
+  if (status === 'warning') return 'In arrivo';
+
+  return 'Ok';
 }
 
 function App() {
@@ -981,6 +989,10 @@ function showToast(message, type = 'success') {
             </div>
 
             <div className="deadline-actions">
+
+              <span className={`status-pill ${getDeadlineStatus(item.dueDate)}`}>
+  {getDeadlineStatusLabel(item.dueDate)}
+              </span>
 
               <strong>{formatAmount(item.amount)}</strong>
 
