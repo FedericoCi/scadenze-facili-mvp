@@ -11,6 +11,7 @@
     "pdfjs-dist": "^3.11.174",
     "react": "latest",
     "react-dom": "latest",
+    "resend": "^6.12.4",
     "vite": "latest"
   }
 }

@@ -145,6 +145,14 @@ function App() {
   const monthTotal = useMemo(() => deadlines.reduce((sum, item) => sum + (Number(item.amount) || 0), 0), [deadlines]);
   const nextSevenDays = useMemo(() => deadlines.filter((item) => new Date(item.dueDate) <= new Date('2026-06-29')).length, [deadlines]);
 
+const urgentDeadlines = useMemo(
+  () =>
+    deadlines.filter(
+      (item) => getDeadlineStatus(item.dueDate) === 'urgent'
+    ),
+  [deadlines]
+);
+
   const [extracted, setExtracted] = useState({
   title: '',
   provider: '',
@@ -474,7 +482,7 @@ async function signIn() {
   setShowLogin(false);
 }
 
-async function signOut() {
+async function signOut() {async function signOut() {
   if (editingDeadline) {
     const confirmLogout = confirm(
       'Hai una modifica in corso. Vuoi uscire comunque?'
@@ -487,6 +495,31 @@ async function signOut() {
   setEditingDeadline(null);
   showToast('Logout effettuato.');
 }
+
+async function sendTestEmail() {
+  if (!session?.user?.email) {
+    showToast('Accedi prima di inviare una mail di test.', 'error');
+    setShowLogin(true);
+    return;
+  }
+
+  const response = await fetch('/api/send-reminder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: session.user.email,
+    }),
+  });
+
+  if (!response.ok) {
+    showToast('Errore invio email.', 'error');
+    return;
+  }
+
+  showToast('Email di test inviata.');
+}}
 
 function showToast(message, type = 'success') {
   setToast({ message, type });
@@ -528,6 +561,10 @@ function showToast(message, type = 'success') {
     </button>
   </div>
 )}
+
+<button className="secondary" onClick={sendTestEmail}>
+  Invia email test
+</button>
 
   <div className="trust-pill">
     <ShieldCheck size={16} />
@@ -944,6 +981,19 @@ function showToast(message, type = 'success') {
 )}
 
         <section className="panel">
+
+{urgentDeadlines.length > 0 && (
+  <section className="panel">
+    <h2>⚠️ Da fare subito</h2>
+
+    {urgentDeadlines.map((item) => (
+      <div key={item.id} className="urgent-item">
+        <strong>{item.title}</strong>
+        <div>{formatDate(item.dueDate)}</div>
+      </div>
+    ))}
+  </section>
+)}
 
   <h2>Scadenze salvate</h2>
 
