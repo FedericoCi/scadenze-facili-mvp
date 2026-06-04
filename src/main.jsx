@@ -352,6 +352,7 @@ function App() {
       due_date: dueDate,
       amount: rest.amount,
       user_id: session?.user?.id,
+      user_email: session?.user?.email,
     };
 
     const { data, error } = await supabase
@@ -405,6 +406,8 @@ function App() {
       due_date: manualDate,
       amount: manualAmount ? Number(manualAmount) : null,
       user_id: session?.user?.id,
+      user_email: session?.user?.email,
+
     };
 
     const { data, error } = await supabase
