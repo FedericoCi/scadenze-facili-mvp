@@ -548,26 +548,29 @@ function App() {
     showToast('Logout effettuato.');
   }
 
-  async function sendTestEmail() {
-    if (!session?.user?.email) {
-      showToast('Accedi prima di inviare una mail di test.', 'error');
-      setShowLogin(true);
-      return;
-    }
-
-    const response = await fetch('/api/send-reminder', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: session.user.email }),
-    });
-
-    if (!response.ok) {
-      showToast('Errore invio email.', 'error');
-      return;
-    }
-
-    showToast('Email di test inviata.');
+  async function sendTestEmail() {async function sendReminderEmail(deadline) {
+  if (!session?.user?.email) {
+    showToast('Accedi prima di inviare una mail.', 'error');
+    setShowLogin(true);
+    return;
   }
+
+  const response = await fetch('/api/send-reminder', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: session.user.email,
+      deadline,
+    }),
+  });
+
+  if (!response.ok) {
+    showToast('Errore invio email.', 'error');
+    return;
+  }
+
+  showToast('Promemoria email inviato.');
+}}
 
   return (
     <main className="page">
@@ -602,10 +605,6 @@ function App() {
                 </button>
               </div>
             )}
-
-            <button className="secondary" onClick={sendTestEmail}>
-              Invia email test
-            </button>
 
             <div className="trust-pill">
               <ShieldCheck size={16} />
@@ -1145,6 +1144,13 @@ function App() {
                       </span>
 
                       <strong>{formatAmount(item.amount)}</strong>
+
+<button
+  className="secondary"
+  onClick={() => sendReminderEmail(item)}
+>
+  Invia reminder
+</button>
 
                       <button
                         className="icon-button"
