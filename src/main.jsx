@@ -214,6 +214,25 @@ function App() {
     }, 3000);
   }
 
+  async function deadlineAlreadyExists({ title, dueDate }) {
+  const cleanTitle = title.trim();
+
+  const { data, error } = await supabase
+    .from('deadlines')
+    .select('id')
+    .eq('user_id', session?.user?.id)
+    .eq('title', cleanTitle)
+    .eq('due_date', dueDate)
+    .limit(1);
+
+  if (error) {
+    console.error('Errore controllo duplicati:', error);
+    return false;
+  }
+
+  return data.length > 0;
+}
+
   async function analyzeEmailText() {
     if (!emailText.trim()) {
       showToast('Incolla prima il testo della mail.', 'error');
@@ -346,7 +365,7 @@ function App() {
     const { insight, dueDate, ...rest } = extracted;
 
     const deadline = {
-      title: rest.title,
+      title: rest.title.trim(),
       provider: rest.provider,
       category: rest.category,
       due_date: dueDate,
@@ -354,6 +373,17 @@ function App() {
       user_id: session?.user?.id,
       user_email: session?.user?.email,
     };
+
+    const alreadyExists = await deadlineAlreadyExists({
+  title: deadline.title,
+  dueDate: deadline.due_date,
+});
+
+if (alreadyExists) {
+  showToast('Questa scadenza è già stata salvata.', 'error');
+  setIsSavingExtracted(false);
+  return;
+}
 
     const { data: existingDeadline, error: existingError } = await supabase
   .from('deadlines')
@@ -419,7 +449,7 @@ console.log('EMAIL SESSION:', session?.user?.email);
     setIsSavingManual(true);
 
     const deadline = {
-      title: manualTitle,
+      title: manualTitle.trim(),
       provider: 'Inserito manualmente',
       category: 'Altro',
       due_date: manualDate,
@@ -428,6 +458,16 @@ console.log('EMAIL SESSION:', session?.user?.email);
       user_email: session?.user?.email,
     };
 
+    const alreadyExists = await deadlineAlreadyExists({
+  title: deadline.title,
+  dueDate: deadline.due_date,
+});
+
+if (alreadyExists) {
+  showToast('Questa scadenza è già stata salvata.', 'error');
+  setIsSavingManual(false);
+  return;
+}
 
     const { data: existingDeadline, error: existingError } = await supabase
   .from('deadlines')
