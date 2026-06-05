@@ -147,6 +147,7 @@ function App() {
   const [manualTitle, setManualTitle] = useState('');
   const [manualDate, setManualDate] = useState('');
   const [manualAmount, setManualAmount] = useState('');
+  const [manualNotes, setManualNotes] = useState('');
   const [manualProvider, setManualProvider] = useState('');
   const [editingDeadline, setEditingDeadline] = useState(null);
   const [deadlineToDelete, setDeadlineToDelete] = useState(null);
@@ -161,13 +162,14 @@ function App() {
   const fileInputRef = useRef(null);
 
   const [extracted, setExtracted] = useState({
-    title: '',
-    provider: '',
-    category: 'Altro',
-    dueDate: '',
-    amount: null,
-    insight: '',
-  });
+  title: '',
+  provider: '',
+  category: 'Altro',
+  dueDate: '',
+  amount: null,
+  notes: '',
+  insight: '',
+});
 
   useEffect(() => {
     async function loadDeadlines(userId) {
@@ -194,6 +196,7 @@ function App() {
         category: item.category,
         dueDate: item.due_date,
         amount: item.amount === null ? null : Number(item.amount),
+        notes: saved.notes,
         reminderSentAt: item.reminder_sent_at,
       }));
 
@@ -320,6 +323,7 @@ function App() {
       category: data.result.category || 'Altro',
       dueDate: data.result.dueDate,
       amount: data.result.amount ?? null,
+      notes: '',
       insight: 'Dati estratti automaticamente dal testo incollato.',
     });
 
@@ -375,6 +379,7 @@ function App() {
       category: data.result.category || 'Altro',
       dueDate: data.result.dueDate,
       amount: data.result.amount ?? null,
+      notes: '',
       insight: 'Dati estratti automaticamente dal PDF.',
     });
 
@@ -400,6 +405,7 @@ function App() {
       category: rest.category,
       due_date: dueDate,
       amount: rest.amount,
+      notes: rest.notes?.trim() || null,
       user_id: session?.user?.id,
       user_email: session?.user?.email,
       reminderSentAt: saved.reminder_sent_at,
@@ -457,6 +463,7 @@ if (existingDeadline) {
         category: saved.category,
         dueDate: saved.due_date,
         amount: saved.amount === null ? null : Number(saved.amount),
+        notes: saved.notes,
       },
       ...deadlines,
     ]);
@@ -485,6 +492,7 @@ console.log('EMAIL SESSION:', session?.user?.email);
       category: 'Altro',
       due_date: manualDate,
       amount: manualAmount ? Number(manualAmount) : null,
+      notes: manualNotes.trim() || null,
       user_id: session?.user?.id,
       user_email: session?.user?.email,
     };
@@ -540,6 +548,7 @@ if (existingDeadline) {
         category: saved.category,
         dueDate: saved.due_date,
         amount: saved.amount === null ? null : Number(saved.amount),
+        notes: saved.notes,
       },
       ...deadlines,
     ]);
@@ -956,6 +965,21 @@ if (existingDeadline) {
       }
     />
   </label>
+
+    <label>
+  <span>Note</span>
+  <textarea
+    placeholder="Aggiungi una nota facoltativa..."
+    value={extracted.notes}
+    onChange={(e) =>
+      setExtracted({
+        ...extracted,
+        notes: e.target.value,
+      })
+    }
+  />
+</label>
+
 </div>
 
             <div className="smart-note">
@@ -1191,6 +1215,12 @@ if (existingDeadline) {
               onChange={(e) => setManualAmount(e.target.value)}
             />
 
+            <textarea
+              placeholder="Note facoltative, es. pagamento già impostato, rinnovo automatico..."
+              value={manualNotes}
+              onChange={(e) => setManualNotes(e.target.value)}
+            />
+
             <button
               className="primary"
               onClick={saveManual}
@@ -1355,6 +1385,13 @@ if (existingDeadline) {
                           {getDaysUntilLabel(item.dueDate)}
                         </span>
                       </p>
+
+                    {item.notes && (
+                      <p className="deadline-notes">    
+                        {item.notes}
+                      </p>
+                     )}
+
                     </div>
 
                     <div className="deadline-actions">
