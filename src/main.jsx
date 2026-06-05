@@ -387,7 +387,7 @@ function App() {
     setShowEmailPaste(false);
     setEmailText('');
   }
-
+console.log('EMAIL SESSION:', session?.user?.email);
   async function saveManual() {
     if (!session) {
       showToast('Accedi per salvare le tue scadenze.', 'error');
