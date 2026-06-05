@@ -883,13 +883,80 @@ if (existingDeadline) {
               conferma.
             </p>
 
-            <div className="extracted-grid">
-              <Info label="Titolo" value={extracted.title} />
-              <Info label="Fornitore" value={extracted.provider} />
-              <Info label="Categoria" value={extracted.category} />
-              <Info label="Scadenza" value={formatDate(extracted.dueDate)} />
-              <Info label="Importo" value={formatAmount(extracted.amount)} />
-            </div>
+            <div className="extracted-grid editable-extraction">
+  <label>
+    <span>Titolo</span>
+    <input
+      value={extracted.title}
+      onChange={(e) =>
+        setExtracted({
+          ...extracted,
+          title: e.target.value,
+        })
+      }
+    />
+  </label>
+
+  <label>
+    <span>Fornitore</span>
+    <input
+      value={extracted.provider}
+      onChange={(e) =>
+        setExtracted({
+          ...extracted,
+          provider: e.target.value,
+        })
+      }
+    />
+  </label>
+
+  <label>
+    <span>Categoria</span>
+    <select
+      value={extracted.category}
+      onChange={(e) =>
+        setExtracted({
+          ...extracted,
+          category: e.target.value,
+        })
+      }
+    >
+      <option value="Casa">Casa</option>
+      <option value="Auto">Auto</option>
+      <option value="Documenti">Documenti</option>
+      <option value="Altro">Altro</option>
+    </select>
+  </label>
+
+  <label>
+    <span>Scadenza</span>
+    <input
+      type="date"
+      value={extracted.dueDate}
+      onChange={(e) =>
+        setExtracted({
+          ...extracted,
+          dueDate: e.target.value,
+        })
+      }
+    />
+  </label>
+
+  <label>
+    <span>Importo</span>
+    <input
+      type="number"
+      step="0.01"
+      value={extracted.amount ?? ''}
+      onChange={(e) =>
+        setExtracted({
+          ...extracted,
+          amount: e.target.value === '' ? null : Number(e.target.value),
+        })
+      }
+    />
+  </label>
+</div>
 
             <div className="smart-note">
               <strong>Nota smart:</strong> {extracted.insight}
@@ -902,13 +969,6 @@ if (existingDeadline) {
                 disabled={isSavingExtracted}
               >
                 {isSavingExtracted ? 'Salvataggio...' : 'Conferma e salva'}
-              </button>
-
-              <button
-                className="secondary"
-                onClick={() => setShowExtraction(false)}
-              >
-                Modifica
               </button>
 
               <button
