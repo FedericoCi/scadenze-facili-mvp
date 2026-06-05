@@ -611,7 +611,7 @@ console.log('EMAIL SESSION:', session?.user?.email);
 
             <div className="trust-pill">
               <ShieldCheck size={16} />
-              Documento eliminabile dopo l'estrazione
+              File non salvato dopo l’estrazione
             </div>
           </div>
         </header>
@@ -836,6 +836,40 @@ console.log('EMAIL SESSION:', session?.user?.email);
             <p>Puoi eliminare il documento subito dopo l’estrazione.</p>
           </div>
         </section>
+
+        <section className="privacy-section">
+  <div>
+    <div className="badge">
+      <ShieldCheck size={16} />
+      Privacy semplice
+    </div>
+
+    <h2>I tuoi documenti restano sotto controllo.</h2>
+
+    <p>
+      Usiamo il documento solo per leggere le informazioni utili alla scadenza.
+      Non salviamo il file caricato: salviamo solo i dati che confermi tu,
+      come titolo, data, importo, categoria e fornitore.
+    </p>
+  </div>
+
+  <div className="privacy-list">
+    <div>
+      <strong>File non salvato</strong>
+      <span>Il documento viene usato solo per l’estrazione.</span>
+    </div>
+
+    <div>
+      <strong>Conferma manuale</strong>
+      <span>Nessuna scadenza viene salvata senza il tuo ok.</span>
+    </div>
+
+    <div>
+      <strong>Eliminazione facile</strong>
+      <span>Puoi cancellare ogni scadenza quando vuoi.</span>
+    </div>
+  </div>
+</section>
 
         <section className="roadmap">
           <div className="roadmap-header">
