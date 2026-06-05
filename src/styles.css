@@ -503,3 +503,13 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
   margin-bottom: 10px;
   background: #fff7ed;
 }
+
+.reminder-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  white-space: nowrap;
+}

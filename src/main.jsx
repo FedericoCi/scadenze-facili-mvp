@@ -867,8 +867,8 @@ console.log('EMAIL SESSION:', session?.user?.email);
               <span>🔜</span>
 
               <div>
-                <strong>Reminder WhatsApp</strong>
-                <p>Ricevi notifiche automatiche prima della scadenza.</p>
+                <strong>Reminder email automatici</strong>
+                <p>Ricevi una mail 7 giorni prima della scadenza.</p>
               </div>
             </div>
 
@@ -1148,12 +1148,17 @@ console.log('EMAIL SESSION:', session?.user?.email);
 
                       <strong>{formatAmount(item.amount)}</strong>
 
-<button
-  className="secondary"
-  onClick={() => sendReminderEmail(item)}
->
-  Invia reminder
-</button>
+
+                      <span className="reminder-pill">
+                          Email 7 giorni prima
+                      </span>
+
+                      <button
+                        className="secondary"
+                          onClick={() => sendReminderEmail(item)}
+                        >
+                          Invia reminder
+                             </button>
 
                       <button
                         className="icon-button"
