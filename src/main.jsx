@@ -190,15 +190,15 @@ function App() {
       }
 
       const dbDeadlines = data.map((item) => ({
-        id: `db-${item.id}`,
-        title: item.title,
-        provider: item.provider,
-        category: item.category,
-        dueDate: item.due_date,
-        amount: item.amount === null ? null : Number(item.amount),
-        notes: saved.notes,
-        reminderSentAt: item.reminder_sent_at,
-      }));
+  id: `db-${item.id}`,
+  title: item.title,
+  provider: item.provider,
+  category: item.category,
+  dueDate: item.due_date,
+  amount: item.amount === null ? null : Number(item.amount),
+  notes: item.notes,
+  reminderSentAt: item.reminder_sent_at,
+}));
 
       setDeadlines(dbDeadlines);
     }
@@ -408,7 +408,6 @@ function App() {
       notes: rest.notes?.trim() || null,
       user_id: session?.user?.id,
       user_email: session?.user?.email,
-      reminderSentAt: saved.reminder_sent_at,
     };
 
     const alreadyExists = await deadlineAlreadyExists({
@@ -669,7 +668,7 @@ if (existingDeadline) {
     showToast('Logout effettuato.');
   }
 
-  async function sendTestEmail() {async function sendReminderEmail(deadline) {
+  async function sendTestEmail() {async function sendReminderEmail(deadline) {async function sendReminderEmail(deadline) {
   if (!session?.user?.email) {
     showToast('Accedi prima di inviare una mail.', 'error');
     setShowLogin(true);
@@ -691,7 +690,7 @@ if (existingDeadline) {
   }
 
   showToast('Promemoria email inviato.');
-}}
+}}}
 
   return (
     <main className="page">
