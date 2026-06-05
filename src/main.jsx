@@ -165,6 +165,7 @@ function App() {
         category: item.category,
         dueDate: item.due_date,
         amount: item.amount === null ? null : Number(item.amount),
+        reminderSentAt: item.reminder_sent_at,
       }));
 
       setDeadlines(dbDeadlines);
@@ -372,6 +373,7 @@ function App() {
       amount: rest.amount,
       user_id: session?.user?.id,
       user_email: session?.user?.email,
+      reminderSentAt: saved.reminder_sent_at,
     };
 
     const alreadyExists = await deadlineAlreadyExists({
@@ -1260,9 +1262,9 @@ if (existingDeadline) {
                       <strong>{formatAmount(item.amount)}</strong>
 
 
-                      <span className="reminder-pill">
-                          Email 7 giorni prima
-                      </span>
+                      <span className={`reminder-pill ${item.reminderSentAt ? 'sent' : ''}`}>
+                        {item.reminderSentAt ? 'Reminder inviato' : 'Email 7 giorni prima'}
+                      </span> 
 
                       <button
                         className="secondary"
