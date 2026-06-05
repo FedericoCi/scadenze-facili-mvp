@@ -149,6 +149,7 @@ function App() {
   const [manualAmount, setManualAmount] = useState('');
   const [manualNotes, setManualNotes] = useState('');
   const [manualProvider, setManualProvider] = useState('');
+  const [manualCategory, setManualCategory] = useState('Altro');
   const [editingDeadline, setEditingDeadline] = useState(null);
   const [deadlineToDelete, setDeadlineToDelete] = useState(null);
   const [session, setSession] = useState(null);
@@ -164,7 +165,7 @@ function App() {
   const [extracted, setExtracted] = useState({
   title: '',
   provider: '',
-  category: 'Altro',
+  category: manualCategory,
   dueDate: '',
   amount: null,
   notes: '',
@@ -473,7 +474,7 @@ if (existingDeadline) {
     setShowEmailPaste(false);
     setEmailText('');
   }
-console.log('EMAIL SESSION:', session?.user?.email);
+
   async function saveManual() {
     if (!session) {
       showToast('Accedi per salvare le tue scadenze.', 'error');
@@ -554,10 +555,13 @@ if (existingDeadline) {
 
     showToast('Scadenza aggiunta.');
     setIsSavingManual(false);
-    setManualTitle('');
-    setManualDate('');
-    setManualAmount('');
-    setManualProvider('');
+    
+      setManualTitle('');
+      setManualProvider('');
+      setManualCategory('Altro');
+      setManualDate('');
+      setManualAmount('');
+      setManualNotes('');
   }
 
   async function deleteDeadline(id) {
@@ -655,42 +659,18 @@ if (existingDeadline) {
   }
 
   async function signOut() {
-    if (editingDeadline) {
-      const confirmLogout = confirm(
-        'Hai una modifica in corso. Vuoi uscire comunque?'
-      );
+  if (editingDeadline) {
+    const confirmLogout = confirm(
+      'Hai una modifica in corso. Vuoi uscire comunque?'
+    );
 
-      if (!confirmLogout) return;
-    }
-
-    await supabase.auth.signOut();
-    setEditingDeadline(null);
-    showToast('Logout effettuato.');
+    if (!confirmLogout) return;
   }
 
-  async function sendTestEmail() {async function sendReminderEmail(deadline) {async function sendReminderEmail(deadline) {
-  if (!session?.user?.email) {
-    showToast('Accedi prima di inviare una mail.', 'error');
-    setShowLogin(true);
-    return;
-  }
-
-  const response = await fetch('/api/send-reminder', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: session.user.email,
-      deadline,
-    }),
-  });
-
-  if (!response.ok) {
-    showToast('Errore invio email.', 'error');
-    return;
-  }
-
-  showToast('Promemoria email inviato.');
-}}}
+  await supabase.auth.signOut();
+  setEditingDeadline(null);
+  showToast('Logout effettuato.');
+}
 
   return (
     <main className="page">
@@ -1201,6 +1181,16 @@ if (existingDeadline) {
               onChange={(e) => setManualProvider(e.target.value)}
             />
 
+            <select
+              value={manualCategory}
+              onChange={(e) => setManualCategory(e.target.value)}
+                >
+                  <option value="Casa">Casa</option>
+                  <option value="Auto">Auto</option>
+                  <option value="Documenti">Documenti</option>
+                  <option value="Altro">Altro</option>
+                </select>
+
             <input
               type="date"
               value={manualDate}
@@ -1408,13 +1398,6 @@ if (existingDeadline) {
                       <span className={`reminder-pill ${item.reminderSentAt ? 'sent' : ''}`}>
                         {item.reminderSentAt ? 'Reminder inviato' : 'Email 7 giorni prima'}
                       </span> 
-
-                      <button
-                        className="secondary"
-                          onClick={() => sendReminderEmail(item)}
-                        >
-                          Invia reminder
-                             </button>
 
                       <button
                         className="icon-button"
