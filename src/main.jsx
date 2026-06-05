@@ -355,6 +355,25 @@ function App() {
       user_email: session?.user?.email,
     };
 
+    const { data: existingDeadline, error: existingError } = await supabase
+  .from('deadlines')
+  .select('id')
+  .eq('user_id', session?.user?.id)
+  .eq('title', deadline.title)
+  .eq('due_date', deadline.due_date)
+  .maybeSingle();
+
+if (existingError) {
+  console.error('Errore controllo duplicati:', existingError);
+}
+
+if (existingDeadline) {
+  showToast('Questa scadenza è già stata salvata.', 'error');
+  setIsSavingExtracted(false);
+  return;
+}
+
+
     const { data, error } = await supabase
       .from('deadlines')
       .insert([deadline])
@@ -407,8 +426,26 @@ console.log('EMAIL SESSION:', session?.user?.email);
       amount: manualAmount ? Number(manualAmount) : null,
       user_id: session?.user?.id,
       user_email: session?.user?.email,
-
     };
+
+
+    const { data: existingDeadline, error: existingError } = await supabase
+  .from('deadlines')
+  .select('id')
+  .eq('user_id', session?.user?.id)
+  .eq('title', deadline.title)
+  .eq('due_date', deadline.due_date)
+  .maybeSingle();
+
+if (existingError) {
+  console.error('Errore controllo duplicati:', existingError);
+}
+
+if (existingDeadline) {
+  showToast('Questa scadenza è già stata salvata.', 'error');
+  setIsSavingManual(false);
+  return;
+}
 
     const { data, error } = await supabase
       .from('deadlines')
