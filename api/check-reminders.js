@@ -1,13 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
-const supabaseAdmin = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 function formatDate(date) {
   if (!date) return 'Data non indicata';
 
@@ -40,13 +33,38 @@ function toIsoDateOnly(date) {
 }
 
 export default async function handler(req, res) {
-  const authHeader = req.headers.authorization;
-
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
   try {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (!process.env.VITE_SUPABASE_URL) {
+      return res.status(500).json({
+        error: 'VITE_SUPABASE_URL mancante su Vercel',
+      });
+    }
+
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return res.status(500).json({
+        error: 'SUPABASE_SERVICE_ROLE_KEY mancante su Vercel',
+      });
+    }
+
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(500).json({
+        error: 'RESEND_API_KEY mancante su Vercel',
+      });
+    }
+
+    const supabaseAdmin = createClient(
+      process.env.VITE_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const today = new Date();
     const targetDate = addDays(today, 7);
     const targetDateIso = toIsoDateOnly(targetDate);
@@ -60,7 +78,10 @@ export default async function handler(req, res) {
 
     if (error) {
       console.error('Errore lettura scadenze:', error);
-      return res.status(500).json({ error: error.message });
+
+      return res.status(500).json({
+        error: error.message,
+      });
     }
 
     let sent = 0;
@@ -115,7 +136,7 @@ export default async function handler(req, res) {
     console.error('Errore check-reminders:', error);
 
     return res.status(500).json({
-      error: error.message,
+      error: error.message || 'Errore sconosciuto',
     });
   }
 }
