@@ -119,6 +119,7 @@ function App() {
   const [manualTitle, setManualTitle] = useState('');
   const [manualDate, setManualDate] = useState('');
   const [manualAmount, setManualAmount] = useState('');
+  const [manualProvider, setManualProvider] = useState('');
   const [editingDeadline, setEditingDeadline] = useState(null);
   const [deadlineToDelete, setDeadlineToDelete] = useState(null);
   const [session, setSession] = useState(null);
@@ -452,7 +453,7 @@ console.log('EMAIL SESSION:', session?.user?.email);
 
     const deadline = {
       title: manualTitle.trim(),
-      provider: 'Inserito manualmente',
+      provider: manualProvider.trim() || 'Non indicato',
       category: 'Altro',
       due_date: manualDate,
       amount: manualAmount ? Number(manualAmount) : null,
@@ -520,6 +521,7 @@ if (existingDeadline) {
     setManualTitle('');
     setManualDate('');
     setManualAmount('');
+    setManualProvider('');
   }
 
   async function deleteDeadline(id) {
@@ -1080,6 +1082,12 @@ if (existingDeadline) {
               placeholder="Titolo"
               value={manualTitle}
               onChange={(e) => setManualTitle(e.target.value)}
+            />
+
+            <input
+              placeholder="Fornitore"
+              value={manualProvider}
+              onChange={(e) => setManualProvider(e.target.value)}
             />
 
             <input
