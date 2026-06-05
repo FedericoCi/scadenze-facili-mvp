@@ -108,6 +108,34 @@ function getDeadlineStatusLabel(date) {
   return 'Ok';
 }
 
+function getDaysUntilLabel(date) {
+  if (!date) return 'Data non trovata';
+
+  const today = new Date();
+  const due = new Date(date);
+
+  today.setHours(0, 0, 0, 0);
+  due.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.ceil(
+    (due - today) / (1000 * 60 * 60 * 24)
+  );
+
+  if (diffDays < 0) {
+    return `Scaduta da ${Math.abs(diffDays)} giorni`;
+  }
+
+  if (diffDays === 0) {
+    return 'Scade oggi';
+  }
+
+  if (diffDays === 1) {
+    return 'Scade domani';
+  }
+
+  return `Scade tra ${diffDays} giorni`;
+}
+
 function App() {
   const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [showExtraction, setShowExtraction] = useState(false);
@@ -1214,11 +1242,18 @@ if (existingDeadline) {
             <h2>⚠️ Da fare subito</h2>
 
             {urgentDeadlines.map((item) => (
-              <div key={item.id} className="urgent-item">
-                <strong>{item.title}</strong>
-                <div>{formatDate(item.dueDate)}</div>
-              </div>
-            ))}
+  <div key={item.id} className="urgent-item">
+    <div>
+      <strong>{item.title}</strong>
+      <span>{getDaysUntilLabel(item.dueDate)}</span>
+    </div>
+
+    <div>
+      <strong>{formatAmount(item.amount)}</strong>
+      <span>{formatDate(item.dueDate)}</span>
+    </div>
+  </div>
+))}
           </section>
         )}
 
@@ -1255,6 +1290,10 @@ if (existingDeadline) {
                           {item.category}
                         </span>{' '}
                         · {formatDate(item.dueDate)}
+                        <br />
+                        <span className="days-label">
+                          {getDaysUntilLabel(item.dueDate)}
+                        </span>
                       </p>
                     </div>
 

@@ -575,3 +575,44 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
   background: #dcfce7;
   color: #15803d;
 }
+
+.days-label {
+  display: inline-block;
+  margin-top: 6px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.urgent-item {
+  padding: 14px 16px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  background: #fff7ed;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.urgent-item span {
+  display: block;
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.urgent-item > div:last-child {
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .urgent-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .urgent-item > div:last-child {
+    text-align: left;
+  }
+}
