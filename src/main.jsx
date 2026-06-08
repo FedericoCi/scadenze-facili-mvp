@@ -748,7 +748,11 @@ if (existingDeadline) {
               <span className="beta-badge">Beta privata</span>
             </div>
 
-            <p>Non dimenticare più bollette, bolli e documenti.</p>
+            <p>
+              {session
+                ? 'Controlla le prossime scadenze e aggiungine di nuove.'
+                : 'Non dimenticare più bollette, bolli e documenti.'}
+            </p>
           </div>
 
           <div className="header-actions">
@@ -869,11 +873,11 @@ if (existingDeadline) {
                 : 'Da documento a promemoria'}
             </div>
 
-            <h2>Carica un PDF o una foto.</h2>
+            <h2>Aggiungi una scadenza da documento</h2>
 
             <p>
-              ScadenzeFacili trova data, importo e categoria automaticamente.
-              Tu controlli e salvi la scadenza.
+              Carica una bolletta, un’assicurazione o un documento.
+              Controlli i dati trovati e salvi il promemoria.
             </p>
 
             <div className="actions">
@@ -882,7 +886,7 @@ if (existingDeadline) {
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload size={20} />
-                Carica documento
+                Carica PDF o foto
               </button>
 
               <button
@@ -1446,7 +1450,7 @@ if (existingDeadline) {
 
 
         <section className="panel">
-          <h2>Scadenze salvate</h2>
+          <h2>Tutte le scadenze</h2>
 
           <div className="deadline-list">
             {deadlines.length === 0 ? (
