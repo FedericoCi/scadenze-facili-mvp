@@ -109,6 +109,22 @@ function getDeadlineStatusLabel(date) {
 }
 
 function getDaysUntilLabel(date) {
+
+function isWithinNextDays(date, days) {
+  if (!date) return false;
+
+  const today = new Date();
+  const due = new Date(date);
+
+  today.setHours(0, 0, 0, 0);
+  due.setHours(0, 0, 0, 0);
+
+  const limit = new Date(today);
+  limit.setDate(today.getDate() + days);
+
+  return due >= today && due <= limit;
+}
+
   if (!date) return 'Data non trovata';
 
   const today = new Date();
@@ -226,12 +242,12 @@ function App() {
   );
 
   const nextSevenDays = useMemo(
-    () =>
-      deadlines.filter(
-        (item) => new Date(item.dueDate) <= new Date('2026-06-29')
-      ).length,
-    [deadlines]
-  );
+  () =>
+    deadlines.filter((item) =>
+      isWithinNextDays(item.dueDate, 7)
+    ).length,
+  [deadlines]
+);
 
   const urgentDeadlines = useMemo(
     () =>
