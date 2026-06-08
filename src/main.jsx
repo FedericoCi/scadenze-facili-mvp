@@ -1160,14 +1160,13 @@ if (existingDeadline) {
               </div>
             </div>
 
-            <div className="roadmap-item">
-              <span>🔜</span>
-
-              <div>
-                <strong>Reminder email automatici</strong>
-                <p>Ricevi una mail 7 giorni prima della scadenza.</p>
-              </div>
-            </div>
+            <div className="roadmap-item done">
+  <span>✓</span>
+  <div>
+    <strong>Reminder email automatici</strong>
+    <p>Ricevi una mail 7 giorni prima della scadenza.</p>
+  </div>
+</div>
 
             <div className="roadmap-item">
               <span>🔜</span>
