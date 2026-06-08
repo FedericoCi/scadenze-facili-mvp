@@ -1261,6 +1261,28 @@ if (existingDeadline) {
           </div>
         </section>
 
+        <section className="panel guides-section">
+  <div className="section-heading compact">
+    <h2>Guide utili</h2>
+    <p>
+      Consigli pratici per gestire bollette, documenti e scadenze di casa.
+    </p>
+  </div>
+
+  <div className="guide-card">
+    <div>
+      <strong>Come ricordare le scadenze delle bollette</strong>
+      <p>
+        Un metodo semplice per non dimenticare luce, gas, telefono e internet.
+      </p>
+    </div>
+
+    <Link className="secondary" to="/guide/scadenze-bollette">
+      Leggi guida
+    </Link>
+  </div>
+</section>
+
         <section className="beta-section">
           <div>
             <h2>Vuoi provare la beta?</h2>
