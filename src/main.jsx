@@ -1270,17 +1270,17 @@ if (existingDeadline) {
   </div>
 
   <div className="guide-card">
-    <div>
-      <strong>Come ricordare le scadenze delle bollette</strong>
-      <p>
-        Un metodo semplice per non dimenticare luce, gas, telefono e internet.
-      </p>
-    </div>
-
-    <Link className="secondary" to="/guide/scadenze-bollette">
-      Leggi guida
-    </Link>
+  <div>
+    <strong>Promemoria assicurazione auto: come non dimenticare il rinnovo</strong>
+    <p>
+      Un metodo semplice per ricordare la scadenza della polizza auto.
+    </p>
   </div>
+
+  <Link className="secondary" to="/guide/promemoria-assicurazione-auto">
+    Leggi guida
+  </Link>
+</div>
 </section>
 
         <section className="beta-section">
@@ -1707,16 +1707,93 @@ function GuideBollettePage() {
   );
 }
 
+function GuideAssicurazioneAutoPage() {
+  return (
+    <main className="page">
+      <div className="shell">
+        <header className="header">
+          <div>
+            <div className="brand-row">
+              <h1>ScadenzeFacili</h1>
+              <span className="beta-badge">Guida</span>
+            </div>
+
+            <p>Consigli pratici per ricordare il rinnovo dell’assicurazione auto.</p>
+          </div>
+
+          <Link className="secondary" to="/">
+            Torna alla home
+          </Link>
+        </header>
+
+        <section className="panel guide-page">
+          <p className="badge">Guida pratica</p>
+
+          <h2>Promemoria assicurazione auto: come non dimenticare il rinnovo</h2>
+
+          <p>
+            L’assicurazione auto è una delle scadenze più importanti da ricordare.
+            Dimenticare il rinnovo può creare problemi, soprattutto se usi l’auto
+            ogni giorno per lavoro, famiglia o spostamenti quotidiani.
+          </p>
+
+          <h3>Perché è facile dimenticarla</h3>
+
+          <p>
+            Il rinnovo arriva spesso una volta all’anno, quindi non è una scadenza
+            che hai sempre sotto controllo. La comunicazione può arrivare via email,
+            area clienti, app dell’assicurazione o messaggio dell’agenzia.
+          </p>
+
+          <h3>Un metodo semplice per ricordarla</h3>
+
+          <p>
+            Appena ricevi il documento o la comunicazione di rinnovo, salva subito
+            tre informazioni: compagnia assicurativa, data di scadenza e importo.
+            Poi imposta un promemoria almeno una settimana prima.
+          </p>
+
+          <h3>Come può aiutarti ScadenzeFacili</h3>
+
+          <p>
+            Con ScadenzeFacili puoi caricare il PDF dell’assicurazione, una foto o
+            incollare il testo della mail ricevuta. L’app prova a trovare data,
+            importo e fornitore. Tu controlli i dati e salvi la scadenza.
+          </p>
+
+          <p>
+            Una volta salvata, ricevi un reminder email 7 giorni prima, così hai
+            tempo per verificare il rinnovo, confrontare eventuali alternative o
+            contattare l’agenzia.
+          </p>
+
+          <div className="actions">
+            <Link className="primary" to="/">
+              Prova ScadenzeFacili gratis
+            </Link>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
 function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route
-          path="/guide/scadenze-bollette"
-          element={<GuideBollettePage />}
-        />
-      </Routes>
+  <Route path="/" element={<HomePage />} />
+
+  <Route
+    path="/guide/scadenze-bollette"
+    element={<GuideBollettePage />}
+  />
+
+  <Route
+    path="/guide/promemoria-assicurazione-auto"
+    element={<GuideAssicurazioneAutoPage />}
+  />
+</Routes>
     </BrowserRouter>
   );
 }
