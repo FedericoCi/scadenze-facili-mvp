@@ -595,10 +595,11 @@ if (existingDeadline) {
         category: editingDeadline.category,
         due_date: editingDeadline.dueDate,
         amount:
-          editingDeadline.amount === ''
-            ? null
-            : Number(editingDeadline.amount),
-      })
+        editingDeadline.amount === ''
+          ? null
+          : Number(editingDeadline.amount),
+          notes: editingDeadline.notes?.trim() || null,
+              })
       .eq('id', dbId);
 
     if (error) {
@@ -1182,6 +1183,21 @@ if (existingDeadline) {
             />
 
             <select
+            value={editingDeadline.category}
+              onChange={(e) =>
+                setEditingDeadline({
+                ...editingDeadline,
+                category: e.target.value,
+                })
+              }
+            >
+            <option value="Casa">Casa</option>
+            <option value="Auto">Auto</option>
+            <option value="Documenti">Documenti</option>
+            <option value="Altro">Altro</option>
+            </select>
+
+            <select
               value={manualCategory}
               onChange={(e) => setManualCategory(e.target.value)}
                 >
@@ -1203,6 +1219,17 @@ if (existingDeadline) {
               value={manualAmount}
               onChange={(e) => setManualAmount(e.target.value)}
             />
+
+            <textarea
+  placeholder="Note"
+  value={editingDeadline.notes || ''}
+  onChange={(e) =>
+    setEditingDeadline({
+      ...editingDeadline,
+      notes: e.target.value,
+    })
+  }
+/>
 
             <textarea
               placeholder="Note facoltative, es. pagamento già impostato, rinnovo automatico..."
