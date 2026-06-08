@@ -639,6 +639,17 @@ if (existingDeadline) {
     showToast('Scadenza modificata.');
   }
 
+  function startEditingDeadline(item) {
+  setEditingDeadline(item);
+
+  setTimeout(() => {
+    editSectionRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, 50);
+}
+
   async function signIn() {
     if (!authEmail) return;
 
