@@ -1206,17 +1206,6 @@ if (existingDeadline) {
             />
 
             <textarea
-  placeholder="Note"
-  value={editingDeadline?.notes || ''}
-  onChange={(e) =>
-    setEditingDeadline({
-      ...editingDeadline,
-      notes: e.target.value,
-    })
-  }
-/>
-
-            <textarea
               placeholder="Note facoltative, es. pagamento già impostato, rinnovo automatico..."
               value={manualNotes}
               onChange={(e) => setManualNotes(e.target.value)}
@@ -1298,6 +1287,17 @@ if (existingDeadline) {
                 }
               />
             </div>
+
+            <textarea
+  placeholder="Note"
+  value={editingDeadline?.notes || ''}
+  onChange={(e) =>
+    setEditingDeadline({
+      ...editingDeadline,
+      notes: e.target.value,
+    })
+  }
+/>
 
             <div className="actions edit-actions">
               <button className="primary" onClick={updateDeadline}>
