@@ -760,3 +760,26 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
   gap: 12px;
   flex-wrap: wrap;
 }
+
+.guide-page {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.guide-page h2 {
+  font-size: 42px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin: 18px 0;
+}
+
+.guide-page h3 {
+  margin-top: 28px;
+  font-size: 24px;
+}
+
+.guide-page p {
+  color: #475569;
+  line-height: 1.7;
+  font-size: 17px;
+}

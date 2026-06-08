@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import {
   Upload,
   Mail,
@@ -171,7 +172,7 @@ function isWithinNextDays(date, days) {
   return due >= today && due <= limit;
 }
 
-function App() {
+function HomePage() {
   const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [showExtraction, setShowExtraction] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -1618,4 +1619,84 @@ function Stat({ icon, label, value, hint }) {
   );
 }
 
-createRoot(document.getElementById('root')).render(<App />);
+function GuideBollettePage() {
+  return (
+    <main className="page">
+      <div className="shell">
+        <header className="header">
+          <div>
+            <div className="brand-row">
+              <h1>ScadenzeFacili</h1>
+              <span className="beta-badge">Guida</span>
+            </div>
+
+            <p>Consigli pratici per ricordare le scadenze delle bollette.</p>
+          </div>
+
+          <Link className="secondary" to="/">
+            Torna alla home
+          </Link>
+        </header>
+
+        <section className="panel guide-page">
+          <p className="badge">Guida pratica</p>
+
+          <h2>Come ricordare le scadenze delle bollette</h2>
+
+          <p>
+            Tra luce, gas, telefono, internet e Tari è facile perdere una
+            scadenza. Il problema non è solo pagare in ritardo: spesso ci si
+            accorge della bolletta quando ormai è vicina alla data limite.
+          </p>
+
+          <h3>Perché le bollette si dimenticano facilmente</h3>
+
+          <p>
+            Le scadenze arrivano da canali diversi: email, PDF, area clienti,
+            posta cartacea o notifiche dell’app del fornitore. Se non vengono
+            raccolte in un unico posto, diventa difficile ricordarle tutte.
+          </p>
+
+          <h3>Un metodo semplice</h3>
+
+          <p>
+            Ogni volta che ricevi una bolletta, salva subito tre informazioni:
+            fornitore, importo e data di scadenza. Poi imposta un promemoria
+            qualche giorno prima, così hai tempo di controllare o pagare.
+          </p>
+
+          <h3>Come può aiutarti ScadenzeFacili</h3>
+
+          <p>
+            Con ScadenzeFacili puoi caricare un PDF, una foto o incollare il
+            testo di una mail. L’app prova a trovare data, importo e fornitore,
+            tu controlli i dati e salvi la scadenza. Poi ricevi una mail 7
+            giorni prima.
+          </p>
+
+          <div className="actions">
+            <Link className="primary" to="/">
+              Prova ScadenzeFacili
+            </Link>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function AppRouter() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/guide/scadenze-bollette"
+          element={<GuideBollettePage />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+createRoot(document.getElementById('root')).render(<AppRouter />);
