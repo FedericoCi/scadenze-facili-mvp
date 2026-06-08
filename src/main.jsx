@@ -489,7 +489,7 @@ if (existingDeadline) {
     const deadline = {
       title: manualTitle.trim(),
       provider: manualProvider.trim() || 'Non indicato',
-      category: 'Altro',
+      category: manualCategory,
       due_date: manualDate,
       amount: manualAmount ? Number(manualAmount) : null,
       notes: manualNotes.trim() || null,
@@ -1183,21 +1183,6 @@ if (existingDeadline) {
             />
 
             <select
-            value={editingDeadline.category}
-              onChange={(e) =>
-                setEditingDeadline({
-                ...editingDeadline,
-                category: e.target.value,
-                })
-              }
-            >
-            <option value="Casa">Casa</option>
-            <option value="Auto">Auto</option>
-            <option value="Documenti">Documenti</option>
-            <option value="Altro">Altro</option>
-            </select>
-
-            <select
               value={manualCategory}
               onChange={(e) => setManualCategory(e.target.value)}
                 >
@@ -1222,7 +1207,7 @@ if (existingDeadline) {
 
             <textarea
   placeholder="Note"
-  value={editingDeadline.notes || ''}
+  value={editingDeadline?.notes || ''}
   onChange={(e) =>
     setEditingDeadline({
       ...editingDeadline,
@@ -1274,6 +1259,21 @@ if (existingDeadline) {
                   })
                 }
               />
+
+              <select
+  value={editingDeadline?.category || 'Altro'}
+  onChange={(e) =>
+    setEditingDeadline({
+      ...editingDeadline,
+      category: e.target.value,
+    })
+  }
+>
+  <option value="Casa">Casa</option>
+  <option value="Auto">Auto</option>
+  <option value="Documenti">Documenti</option>
+  <option value="Altro">Altro</option>
+</select>
 
               <input
                 type="date"
