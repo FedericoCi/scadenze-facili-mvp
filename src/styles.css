@@ -720,3 +720,20 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
   background: #fee2e2;
   color: #991b1b;
 }
+
+.upload-card.compact-upload {
+  grid-template-columns: 1fr;
+  padding: 28px;
+}
+
+.upload-card.compact-upload .upload-copy h2 {
+  font-size: 34px;
+}
+
+.upload-card.compact-upload .upload-copy p {
+  max-width: 720px;
+}
+
+.upload-card.compact-upload .examples {
+  display: none;
+}

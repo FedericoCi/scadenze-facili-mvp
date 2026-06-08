@@ -837,7 +837,9 @@ if (existingDeadline) {
         )}
 
         <section
-          className={`upload-card ${isDragging ? 'dragging' : ''}`}
+  className={`upload-card ${session ? 'compact-upload' : ''} ${
+    isDragging ? 'dragging' : ''
+  }`}
           onDragOver={(e) => {
             e.preventDefault();
             setIsDragging(true);
@@ -873,12 +875,17 @@ if (existingDeadline) {
                 : 'Da documento a promemoria'}
             </div>
 
-            <h2>Aggiungi una scadenza da documento</h2>
+            <h2>
+  {session
+    ? 'Aggiungi da documento'
+    : 'Aggiungi una scadenza da documento'}
+</h2>
 
             <p>
-              Carica una bolletta, un’assicurazione o un documento.
-              Controlli i dati trovati e salvi il promemoria.
-            </p>
+  {session
+    ? 'Carica una bolletta, assicurazione o documento. Controlli i dati e salvi il promemoria.'
+    : 'Carica una bolletta, un’assicurazione o un documento. Controlli i dati trovati e salvi il promemoria.'}
+</p>
 
             <div className="actions">
               <button
@@ -903,6 +910,7 @@ if (existingDeadline) {
             </small>
           </div>
 
+          {!session && (
           <div className="examples">
             <h3>Cosa puoi caricare?</h3>
             <div>Bolletta luce, gas o internet</div>
@@ -910,6 +918,7 @@ if (existingDeadline) {
             <div>Revisione, bollo o tagliando</div>
             <div>Documento, garanzia o abbonamento</div>
           </div>
+        )}
         </section>
 
         {showEmailPaste && (
