@@ -267,6 +267,15 @@ function App() {
     ).length,
   [deadlines]
 );
+const activeReminders = useMemo(
+  () =>
+    deadlines.filter(
+      (item) =>
+        getDeadlineStatus(item.dueDate) !== 'expired' &&
+        !item.reminderSentAt
+    ).length,
+  [deadlines]
+);
 
   const urgentDeadlines = useMemo(
     () =>
@@ -815,17 +824,17 @@ if (existingDeadline) {
 
           <Stat
             icon={<FileText size={20} />}
-            label="Uscite previste"
+            llabel="Totale da pagare"
             value={formatAmount(monthTotal)}
             hint="importi conosciuti"
           />
 
           <Stat
-            icon={<CheckCircle2 size={20} />}
-            label="Reminder"
-            value="Email"
-            hint="push nella versione futura"
-          />
+  icon={<CheckCircle2 size={20} />}
+  label="Reminder attivi"
+  value={activeReminders}
+  hint="email automatiche"
+/>
         </section>
 
         {showLogin && !session && (
