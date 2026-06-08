@@ -1473,14 +1473,35 @@ if (existingDeadline) {
 
           <div className="deadline-list">
             {deadlines.length === 0 ? (
-              <div className="empty-state">
-                <h3>Nessuna scadenza salvata</h3>
+              <div className="empty-state enhanced-empty">
+  <h3>Nessuna scadenza salvata</h3>
 
-                <p>
-                  Carica una bolletta, una revisione o aggiungi una scadenza
-                  manualmente per iniziare.
-                </p>
-              </div>
+  <p>
+    Inizia caricando una bolletta, un’assicurazione o aggiungendo una
+    scadenza manuale.
+  </p>
+
+  <div className="empty-actions">
+    <button
+      className="primary"
+      onClick={() => fileInputRef.current?.click()}
+    >
+      <Upload size={18} />
+      Carica PDF o foto
+    </button>
+
+    <button
+      className="secondary"
+      onClick={() => {
+        document
+          .querySelector('.manual-panel')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }}
+    >
+      Aggiungi manualmente
+    </button>
+  </div>
+</div>
             ) : (
               deadlines
                 .slice()
