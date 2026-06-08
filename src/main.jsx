@@ -86,7 +86,16 @@ function getDeadlineStatus(date) {
   const today = new Date();
   const due = new Date(date);
 
-  const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+  today.setHours(0, 0, 0, 0);
+  due.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.ceil(
+    (due - today) / (1000 * 60 * 60 * 24)
+  );
+
+  if (diffDays < 0) {
+    return 'expired';
+  }
 
   if (diffDays <= 7) {
     return 'urgent';
@@ -102,6 +111,7 @@ function getDeadlineStatus(date) {
 function getDeadlineStatusLabel(date) {
   const status = getDeadlineStatus(date);
 
+  if (status === 'expired') return 'Scaduta';
   if (status === 'urgent') return 'Urgente';
   if (status === 'warning') return 'In arrivo';
 

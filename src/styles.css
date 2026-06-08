@@ -706,3 +706,12 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
   color: #64748b;
   font-size: 16px;
 }
+
+.deadline-row.expired {
+  border-left: 5px solid #7f1d1d;
+}
+
+.status-pill.expired {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
