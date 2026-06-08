@@ -759,10 +759,10 @@ if (existingDeadline) {
             </div>
 
             <p>
-              {session
-                ? 'Controlla le prossime scadenze e aggiungine di nuove.'
-                : 'Non dimenticare più bollette, bolli e documenti.'}
-            </p>
+  {session
+    ? 'Controlla le prossime scadenze e aggiungine di nuove.'
+    : 'Carica una bolletta, un PDF o una mail: ScadenzeFacili trova la scadenza e ti ricorda quando pagarla.'}
+</p>
           </div>
 
           <div className="header-actions">
@@ -904,15 +904,17 @@ if (existingDeadline) {
             <div className="badge">
               <Sparkles size={16} />
               {isDragging
-                ? 'Rilascia il documento qui'
-                : 'Da documento a promemoria'}
+  ? 'Rilascia il documento qui'
+  : session
+    ? 'Nuova scadenza'
+    : 'Promemoria automatici per le tue scadenze'}
             </div>
 
-            <h2>
+  <p>
   {session
-    ? 'Aggiungi da documento'
-    : 'Aggiungi una scadenza da documento'}
-</h2>
+    ? 'Carica una bolletta, assicurazione o documento. Controlli i dati e salvi il promemoria.'
+    : 'Carica un PDF, una foto o incolla il testo di una mail. Troviamo data, importo e fornitore, poi ti avvisiamo via email prima della scadenza.'}
+</p>
 
             <p>
   {session
@@ -1274,7 +1276,7 @@ if (existingDeadline) {
             target="_blank"
             rel="noreferrer"
           >
-            Entra nella beta
+            Prova la beta gratis
           </a>
         </section>
 
