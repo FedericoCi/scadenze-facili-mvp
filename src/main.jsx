@@ -256,17 +256,18 @@ function App() {
   }, []);
 
   const monthTotal = useMemo(
-    () => deadlines.reduce((sum, item) => sum + (Number(item.amount) || 0), 0),
-    [deadlines]
-  );
+  () => deadlines.reduce((sum, item) => sum + (Number(item.amount) || 0), 0),
+  [deadlines]
+);
 
-  const nextSevenDays = useMemo(
+const nextSevenDays = useMemo(
   () =>
     deadlines.filter((item) =>
       isWithinNextDays(item.dueDate, 7)
     ).length,
   [deadlines]
 );
+
 const activeReminders = useMemo(
   () =>
     deadlines.filter(
