@@ -805,6 +805,29 @@ if (existingDeadline) {
   )}
 </section>
 
+<section className="stats">
+          <Stat
+            icon={<CalendarDays size={20} />}
+            label="Prossimi 7 giorni"
+            value={nextSevenDays}
+            hint="scadenze da controllare"
+          />
+
+          <Stat
+            icon={<FileText size={20} />}
+            label="Uscite previste"
+            value={formatAmount(monthTotal)}
+            hint="importi conosciuti"
+          />
+
+          <Stat
+            icon={<CheckCircle2 size={20} />}
+            label="Reminder"
+            value="Email"
+            hint="push nella versione futura"
+          />
+        </section>
+
         {showLogin && !session && (
           <div className="modal-backdrop">
             <div className="login-modal">
@@ -1190,29 +1213,6 @@ if (existingDeadline) {
               </div>
             </div>
           </div>
-        </section>
-
-        <section className="stats">
-          <Stat
-            icon={<CalendarDays size={20} />}
-            label="Prossimi 7 giorni"
-            value={nextSevenDays}
-            hint="scadenze da controllare"
-          />
-
-          <Stat
-            icon={<FileText size={20} />}
-            label="Uscite previste"
-            value={formatAmount(monthTotal)}
-            hint="importi conosciuti"
-          />
-
-          <Stat
-            icon={<CheckCircle2 size={20} />}
-            label="Reminder"
-            value="Email"
-            hint="push nella versione futura"
-          />
         </section>
 
         <section className="how-it-works">
