@@ -1196,61 +1196,70 @@ if (existingDeadline) {
           </>
       )}
 
-        <section className="panel">
-          <h2>Aggiungi manualmente</h2>
+       <section className="panel manual-panel">
+  <div className="section-heading compact">
+    <h2>Aggiungi manualmente</h2>
+    <p>
+      Inserisci una scadenza anche senza caricare un documento.
+    </p>
+  </div>
 
-          <div className="manual-grid">
-            <input
-              placeholder="Titolo"
-              value={manualTitle}
-              onChange={(e) => setManualTitle(e.target.value)}
-            />
+  <div className="manual-form">
+    <div className="manual-row">
+      <input
+        placeholder="Titolo"
+        value={manualTitle}
+        onChange={(e) => setManualTitle(e.target.value)}
+      />
 
-            <input
-              placeholder="Fornitore"
-              value={manualProvider}
-              onChange={(e) => setManualProvider(e.target.value)}
-            />
+      <input
+        placeholder="Fornitore"
+        value={manualProvider}
+        onChange={(e) => setManualProvider(e.target.value)}
+      />
 
-            <select
-              value={manualCategory}
-              onChange={(e) => setManualCategory(e.target.value)}
-                >
-                  <option value="Casa">Casa</option>
-                  <option value="Auto">Auto</option>
-                  <option value="Documenti">Documenti</option>
-                  <option value="Altro">Altro</option>
-                </select>
+      <select
+        value={manualCategory}
+        onChange={(e) => setManualCategory(e.target.value)}
+      >
+        <option value="Casa">Casa</option>
+        <option value="Auto">Auto</option>
+        <option value="Documenti">Documenti</option>
+        <option value="Altro">Altro</option>
+      </select>
 
-            <input
-              type="date"
-              value={manualDate}
-              onChange={(e) => setManualDate(e.target.value)}
-            />
+      <input
+        type="date"
+        value={manualDate}
+        onChange={(e) => setManualDate(e.target.value)}
+      />
 
-            <input
-              type="number"
-              placeholder="Importo"
-              value={manualAmount}
-              onChange={(e) => setManualAmount(e.target.value)}
-            />
+      <input
+        type="number"
+        placeholder="Importo"
+        value={manualAmount}
+        onChange={(e) => setManualAmount(e.target.value)}
+      />
+    </div>
 
-            <textarea
-              placeholder="Note facoltative, es. pagamento già impostato, rinnovo automatico..."
-              value={manualNotes}
-              onChange={(e) => setManualNotes(e.target.value)}
-            />
+    <div className="manual-row notes-row">
+      <textarea
+        placeholder="Note facoltative, es. pagamento già impostato, rinnovo automatico..."
+        value={manualNotes}
+        onChange={(e) => setManualNotes(e.target.value)}
+      />
 
-            <button
-              className="primary"
-              onClick={saveManual}
-              disabled={isSavingManual}
-            >
-              <Plus size={16} />
-              {isSavingManual ? 'Salvataggio...' : 'Salva'}
-            </button>
-          </div>
-        </section>
+      <button
+        className="primary save-manual-button"
+        onClick={saveManual}
+        disabled={isSavingManual}
+      >
+        <Plus size={16} />
+        {isSavingManual ? 'Salvataggio...' : 'Salva scadenza'}
+      </button>
+    </div>
+  </div>
+</section>
 
         {editingDeadline && (
           <section className="panel" ref={editSectionRef}>
