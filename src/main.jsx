@@ -738,25 +738,33 @@ if (existingDeadline) {
           </div>
         </header>
 
-        {urgentDeadlines.length > 0 && (
-          <section className="panel">
-            <h2>⚠️ Da fare subito</h2>
+        <section className="panel urgent-panel">
+  <h2>
+    {urgentDeadlines.length > 0
+      ? '⚠️ Da fare subito'
+      : '✅ Nessuna scadenza urgente'}
+  </h2>
 
-            {urgentDeadlines.map((item) => (
-  <div key={item.id} className="urgent-item">
-    <div>
-      <strong>{item.title}</strong>
-      <span>{getDaysUntilLabel(item.dueDate)}</span>
-    </div>
+  {urgentDeadlines.length > 0 ? (
+    urgentDeadlines.map((item) => (
+      <div key={item.id} className="urgent-item">
+        <div>
+          <strong>{item.title}</strong>
+          <span>{getDaysUntilLabel(item.dueDate)}</span>
+        </div>
 
-    <div>
-      <strong>{formatAmount(item.amount)}</strong>
-      <span>{formatDate(item.dueDate)}</span>
-    </div>
-  </div>
-))}
-          </section>
-        )}
+        <div>
+          <strong>{formatAmount(item.amount)}</strong>
+          <span>{formatDate(item.dueDate)}</span>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="empty-urgent-message">
+      Le prossime scadenze sono sotto controllo.
+    </p>
+  )}
+</section>
 
         {showLogin && !session && (
           <div className="modal-backdrop">
