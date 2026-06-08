@@ -738,6 +738,26 @@ if (existingDeadline) {
           </div>
         </header>
 
+        {urgentDeadlines.length > 0 && (
+          <section className="panel">
+            <h2>⚠️ Da fare subito</h2>
+
+            {urgentDeadlines.map((item) => (
+  <div key={item.id} className="urgent-item">
+    <div>
+      <strong>{item.title}</strong>
+      <span>{getDaysUntilLabel(item.dueDate)}</span>
+    </div>
+
+    <div>
+      <strong>{formatAmount(item.amount)}</strong>
+      <span>{formatDate(item.dueDate)}</span>
+    </div>
+  </div>
+))}
+          </section>
+        )}
+
         {showLogin && !session && (
           <div className="modal-backdrop">
             <div className="login-modal">
@@ -1382,25 +1402,6 @@ if (existingDeadline) {
           </div>
         )}
 
-        {urgentDeadlines.length > 0 && (
-          <section className="panel">
-            <h2>⚠️ Da fare subito</h2>
-
-            {urgentDeadlines.map((item) => (
-  <div key={item.id} className="urgent-item">
-    <div>
-      <strong>{item.title}</strong>
-      <span>{getDaysUntilLabel(item.dueDate)}</span>
-    </div>
-
-    <div>
-      <strong>{formatAmount(item.amount)}</strong>
-      <span>{formatDate(item.dueDate)}</span>
-    </div>
-  </div>
-))}
-          </section>
-        )}
 
         <section className="panel">
           <h2>Scadenze salvate</h2>
