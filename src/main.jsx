@@ -1514,9 +1514,17 @@ if (existingDeadline) {
                       <strong>{formatAmount(item.amount)}</strong>
 
 
-                      <span className={`reminder-pill ${item.reminderSentAt ? 'sent' : ''}`}>
-                        {item.reminderSentAt ? 'Reminder inviato' : 'Email 7 giorni prima'}
-                      </span> 
+                      <span
+  className={`reminder-pill ${
+    item.reminderSentAt ? 'sent' : getDeadlineStatus(item.dueDate) === 'expired' ? 'expired' : ''
+  }`}
+>
+  {item.reminderSentAt
+    ? 'Reminder inviato'
+    : getDeadlineStatus(item.dueDate) === 'expired'
+      ? 'Scadenza passata'
+      : 'Email 7 giorni prima'}
+</span>
 
                       <button
                         className="icon-button"
