@@ -1009,6 +1009,9 @@ if (existingDeadline) {
           </section>
         )}
 
+        {!session && (
+          <>
+
         <section className="benefits">
           <div className="benefit-card">
             <h3>Mai più dimenticanze</h3>
@@ -1189,6 +1192,9 @@ if (existingDeadline) {
             Entra nella beta
           </a>
         </section>
+
+          </>
+      )}
 
         <section className="panel">
           <h2>Aggiungi manualmente</h2>
