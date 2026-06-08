@@ -116,6 +116,17 @@ function getDeadlineStatusLabel(date) {
   if (status === 'warning') return 'In arrivo';
 
   return 'Ok';
+
+function getStatusPriority(date) {
+  const status = getDeadlineStatus(date);
+
+  if (status === 'expired') return 0;
+  if (status === 'urgent') return 1;
+  if (status === 'warning') return 2;
+
+  return 3;
+}
+
 }
 
 function getDaysUntilLabel(date) {
@@ -1452,7 +1463,16 @@ if (existingDeadline) {
             ) : (
               deadlines
                 .slice()
-                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                .sort((a, b) => {
+  const priorityA = getStatusPriority(a.dueDate);
+  const priorityB = getStatusPriority(b.dueDate);
+
+  if (priorityA !== priorityB) {
+    return priorityA - priorityB;
+  }
+
+  return new Date(a.dueDate) - new Date(b.dueDate);
+})
                 .map((item) => (
                   <article
                     key={item.id}
