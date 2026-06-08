@@ -116,6 +116,7 @@ function getDeadlineStatusLabel(date) {
   if (status === 'warning') return 'In arrivo';
 
   return 'Ok';
+}
 
 function getStatusPriority(date) {
   const status = getDeadlineStatus(date);
@@ -125,8 +126,6 @@ function getStatusPriority(date) {
   if (status === 'warning') return 2;
 
   return 3;
-}
-
 }
 
 function getDaysUntilLabel(date) {
