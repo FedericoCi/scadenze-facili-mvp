@@ -161,6 +161,7 @@ function App() {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [analysisSteps, setAnalysisSteps] = useState([]);
   const fileInputRef = useRef(null);
+  const editSectionRef = useRef(null);
 
   const [extracted, setExtracted] = useState({
   title: '',
@@ -605,6 +606,18 @@ if (existingDeadline) {
     if (error) {
       console.error('Errore modifica Supabase:', error);
       showToast('Errore durante la modifica.', 'error');
+
+      function startEditingDeadline(item) {
+  setEditingDeadline(item);
+
+  setTimeout(() => {
+    editSectionRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, 50);
+}
+
       return;
     }
 
@@ -1223,7 +1236,7 @@ if (existingDeadline) {
         </section>
 
         {editingDeadline && (
-          <section className="panel">
+          <section className="panel" ref={editSectionRef}>
             <h2>Modifica scadenza</h2>
 
             <div className="manual-grid">
@@ -1428,7 +1441,7 @@ if (existingDeadline) {
 
                       <button
                         className="icon-button"
-                        onClick={() => setEditingDeadline(item)}
+                        onClick={() => startEditingDeadline(item)}
                         aria-label="Modifica scadenza"
                       >
                         <Pencil size={16} />
