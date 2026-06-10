@@ -1263,36 +1263,48 @@ if (existingDeadline) {
   <div className="section-heading compact">
     <h2>Guide utili</h2>
     <p>
-      Consigli pratici per gestire bollette, documenti e scadenze di casa.
+      Consigli pratici per gestire bollette, auto, documenti e scadenze di casa.
     </p>
   </div>
 
   <div className="guide-card">
-  <div>
-    <strong>Promemoria assicurazione auto: come non dimenticare il rinnovo</strong>
-    <p>
-      Un metodo semplice per ricordare la scadenza della polizza auto.
-    </p>
-  </div>
+    <div>
+      <strong>Come ricordare le scadenze delle bollette</strong>
+      <p>
+        Un metodo semplice per non dimenticare luce, gas, telefono e internet.
+      </p>
+    </div>
 
-  <Link className="secondary" to="/guide/promemoria-assicurazione-auto">
-    Leggi guida
-  </Link>
-</div>
+    <Link className="secondary" to="/guide/scadenze-bollette">
+      Leggi guida
+    </Link>
+  </div>
 
   <div className="guide-card">
-  <div>
-    <strong>Come ricordare la scadenza della revisione auto</strong>
-    <p>
-      Un metodo semplice per non dimenticare revisione, controlli e appuntamenti.
-    </p>
+    <div>
+      <strong>Promemoria assicurazione auto: come non dimenticare il rinnovo</strong>
+      <p>
+        Un metodo semplice per ricordare la scadenza della polizza auto.
+      </p>
+    </div>
+
+    <Link className="secondary" to="/guide/promemoria-assicurazione-auto">
+      Leggi guida
+    </Link>
   </div>
 
-  <Link className="secondary" to="/guide/scadenza-revisione-auto">
-    Leggi guida
-  </Link>
-</div>
+  <div className="guide-card">
+    <div>
+      <strong>Come ricordare la scadenza della revisione auto</strong>
+      <p>
+        Un metodo semplice per non dimenticare revisione, controlli e appuntamenti.
+      </p>
+    </div>
 
+    <Link className="secondary" to="/guide/scadenza-revisione-auto">
+      Leggi guida
+    </Link>
+  </div>
 </section>
 
         <section className="beta-section">
