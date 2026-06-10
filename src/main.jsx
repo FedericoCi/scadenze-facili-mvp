@@ -173,6 +173,10 @@ function isWithinNextDays(date, days) {
 }
 
 function HomePage() {
+  useEffect(() => {
+  document.title =
+    'ScadenzeFacili - Ricorda bollette, bollo, assicurazioni e documenti';
+}, []);
   const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [showExtraction, setShowExtraction] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -1281,6 +1285,20 @@ if (existingDeadline) {
     Leggi guida
   </Link>
 </div>
+
+  <div className="guide-card">
+  <div>
+    <strong>Come ricordare la scadenza della revisione auto</strong>
+    <p>
+      Un metodo semplice per non dimenticare revisione, controlli e appuntamenti.
+    </p>
+  </div>
+
+  <Link className="secondary" to="/guide/scadenza-revisione-auto">
+    Leggi guida
+  </Link>
+</div>
+
 </section>
 
         <section className="beta-section">
@@ -1642,6 +1660,10 @@ function Stat({ icon, label, value, hint }) {
 }
 
 function GuideBollettePage() {
+  useEffect(() => {
+  document.title =
+    'Come ricordare le scadenze delle bollette | ScadenzeFacili';
+}, []);
   return (
     <main className="page">
       <div className="shell">
@@ -1708,6 +1730,10 @@ function GuideBollettePage() {
 }
 
 function GuideAssicurazioneAutoPage() {
+  useEffect(() => {
+  document.title =
+    'Promemoria assicurazione auto: come non dimenticare il rinnovo | ScadenzeFacili';
+}, []);
   return (
     <main className="page">
       <div className="shell">
@@ -1778,6 +1804,76 @@ function GuideAssicurazioneAutoPage() {
   );
 }
 
+function GuideRevisioneAutoPage() {
+  useEffect(() => {
+    document.title =
+      'Come ricordare la scadenza della revisione auto | ScadenzeFacili';
+  }, []);
+
+  return (
+    <main className="page">
+      <div className="shell">
+        <header className="header">
+          <div>
+            <div className="brand-row">
+              <h1>ScadenzeFacili</h1>
+              <span className="beta-badge">Guida</span>
+            </div>
+
+            <p>Consigli pratici per ricordare la scadenza della revisione auto.</p>
+          </div>
+
+          <Link className="secondary" to="/">
+            Torna alla home
+          </Link>
+        </header>
+
+        <section className="panel guide-page">
+          <p className="badge">Guida pratica</p>
+
+          <h2>Come ricordare la scadenza della revisione auto</h2>
+
+          <p>
+            La revisione auto è una scadenza facile da dimenticare perché non
+            arriva ogni mese e spesso non è collegata a una bolletta o a un
+            pagamento ricorrente.
+          </p>
+
+          <h3>Perché è facile dimenticarla</h3>
+
+          <p>
+            Molte persone si ricordano della revisione solo quando controllano
+            i documenti dell’auto o quando devono prenotare un controllo. Se la
+            data non viene salvata subito, rischia di perdersi.
+          </p>
+
+          <h3>Un metodo semplice</h3>
+
+          <p>
+            Dopo ogni revisione, salva subito la prossima scadenza. Puoi segnare
+            anche il centro revisioni, il costo e una nota, per esempio
+            “prenotare qualche giorno prima”.
+          </p>
+
+          <h3>Come può aiutarti ScadenzeFacili</h3>
+
+          <p>
+            Con ScadenzeFacili puoi aggiungere la revisione manualmente oppure
+            caricare una foto o un documento. Una volta salvata, ricevi un
+            reminder email 7 giorni prima.
+          </p>
+
+          <div className="actions">
+            <Link className="primary" to="/">
+              Prova ScadenzeFacili gratis
+            </Link>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
 function AppRouter() {
   return (
     <BrowserRouter>
@@ -1793,6 +1889,12 @@ function AppRouter() {
     path="/guide/promemoria-assicurazione-auto"
     element={<GuideAssicurazioneAutoPage />}
   />
+
+    <Route
+  path="/guide/scadenza-revisione-auto"
+  element={<GuideRevisioneAutoPage />}
+/>
+
 </Routes>
     </BrowserRouter>
   );
