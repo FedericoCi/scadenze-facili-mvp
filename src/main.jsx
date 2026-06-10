@@ -921,12 +921,6 @@ if (existingDeadline) {
     : 'Carica un PDF, una foto o incolla il testo di una mail. Troviamo data, importo e fornitore, poi ti avvisiamo via email prima della scadenza.'}
 </p>
 
-            <p>
-  {session
-    ? 'Carica una bolletta, assicurazione o documento. Controlli i dati e salvi il promemoria.'
-    : 'Carica una bolletta, un’assicurazione o un documento. Controlli i dati trovati e salvi il promemoria.'}
-</p>
-
             <div className="actions">
               <button
                 className="primary"
