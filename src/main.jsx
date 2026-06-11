@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import {
   Upload,
   Mail,
@@ -1906,4 +1907,9 @@ function AppRouter() {
   );
 }
 
-createRoot(document.getElementById('root')).render(<AppRouter />);
+createRoot(document.getElementById('root')).render(
+  <>
+    <AppRouter />
+    <Analytics />
+  </>
+);

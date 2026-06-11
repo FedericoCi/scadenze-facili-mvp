@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",
+    "@vercel/analytics": "^2.0.1",
     "@vitejs/plugin-react": "latest",
     "lucide-react": "latest",
     "pdfjs-dist": "^3.11.174",
