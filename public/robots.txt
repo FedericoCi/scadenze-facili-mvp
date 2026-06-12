@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://scadenzefacili.vercel.app/sitemap.txt
+Sitemap: https://scadenzefacili.vercel.app/sitemap.xml
