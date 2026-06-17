@@ -1334,6 +1334,8 @@ if (existingDeadline) {
           </>
       )}
 
+      {session && (
+  <>
        <section className="panel manual-panel">
   <div className="section-heading compact">
     <h2>Aggiungi manualmente</h2>
@@ -1643,6 +1645,8 @@ if (existingDeadline) {
             )}
           </div>
         </section>
+          </>
+)}
       </div>
     </main>
   );
