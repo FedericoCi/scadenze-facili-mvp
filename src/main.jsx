@@ -792,7 +792,8 @@ if (existingDeadline) {
             </div>
           </div>
         </header>
-
+        {session && (
+  <>
         <section className="panel urgent-panel">
   <h2>
     {urgentDeadlines.length > 0
@@ -843,6 +844,8 @@ if (existingDeadline) {
   hint="email automatiche"
 />
         </section>
+          </>
+)}
 
         {showLogin && !session && (
           <div className="modal-backdrop">
