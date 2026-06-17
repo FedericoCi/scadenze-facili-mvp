@@ -1017,3 +1017,133 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     justify-content: center;
   }
 }
+@media (max-width: 720px) {
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .stat-card strong {
+    font-size: 34px;
+  }
+
+  .urgent-panel {
+    padding: 24px;
+    border-radius: 28px;
+  }
+
+  .urgent-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .urgent-item > div:last-child {
+    text-align: left;
+  }
+
+  .compact-upload {
+    padding: 22px;
+  }
+
+  .manual-panel {
+    padding: 26px;
+    border-radius: 28px;
+  }
+
+  .manual-form,
+  .manual-row,
+  .notes-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .manual-row input,
+  .manual-row select,
+  .manual-row textarea,
+  .notes-row textarea {
+    width: 100%;
+    min-height: 58px;
+    font-size: 18px;
+    border-radius: 18px;
+  }
+
+  .notes-row textarea {
+    min-height: 120px;
+    padding: 18px;
+  }
+
+  .save-manual-button {
+    width: 100%;
+    min-height: 62px;
+    justify-content: center;
+  }
+
+  .deadline-list {
+    gap: 14px;
+  }
+
+  .deadline-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .deadline-row h3 {
+    font-size: 22px;
+    line-height: 1.15;
+  }
+
+  .deadline-row p {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .deadline-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .deadline-actions strong {
+    grid-column: 1 / -1;
+    font-size: 24px;
+  }
+
+  .status-pill,
+  .reminder-pill {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .icon-button {
+    min-height: 44px;
+    border-radius: 14px;
+  }
+
+  .manual-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .edit-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .edit-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
