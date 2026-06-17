@@ -905,3 +905,115 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     padding: 14px 16px;
   }
 }
+@media (max-width: 720px) {
+  .benefits {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .benefit-card {
+    padding: 24px;
+    border-radius: 28px;
+  }
+
+  .benefit-card h3 {
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .benefit-card p {
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+  .privacy-section,
+  .roadmap,
+  .how-it-works,
+  .guides-section,
+  .beta-section {
+    padding: 26px;
+    border-radius: 28px;
+  }
+
+  .privacy-section h2,
+  .roadmap h2,
+  .how-it-works h2,
+  .guides-section h2,
+  .beta-section h2 {
+    font-size: 32px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .privacy-section p,
+  .roadmap p,
+  .section-heading p,
+  .beta-section p {
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+  .privacy-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .privacy-list div,
+  .roadmap-item,
+  .step-card,
+  .guide-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .roadmap-grid,
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .guide-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .guide-card strong {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .guide-card p {
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  .guide-card .secondary,
+  .guide-card a.secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 18px;
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .beta-section {
+    display: grid;
+    gap: 20px;
+  }
+
+  .beta-button {
+    width: 100%;
+    min-height: 58px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
