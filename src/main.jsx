@@ -1523,7 +1523,7 @@ if (existingDeadline) {
         )}
 
 
-        <section className="panel">
+        <section className="panel deadlines-panel">
           <h2>Tutte le scadenze</h2>
 
           <div className="deadline-list">
@@ -1883,10 +1883,47 @@ function GuideRevisioneAutoPage() {
             </Link>
           </div>
         </section>
-      </div>
+            </div>
+
+      {session && (
+        <nav className="mobile-tabbar" aria-label="Navigazione rapida">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload size={18} />
+            <span>Carica</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              document
+                .querySelector('.manual-panel')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            <Plus size={18} />
+            <span>Manuale</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              document
+                .querySelector('.deadlines-panel')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            <CalendarDays size={18} />
+            <span>Scadenze</span>
+          </button>
+        </nav>
+      )}
     </main>
   );
 }
+
 
 function AppRouter() {
   return (
