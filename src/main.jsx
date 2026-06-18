@@ -1289,84 +1289,7 @@ if (existingDeadline) {
           </div>
         </section>
 
-        <section className="privacy-section">
-  <div>
-    <div className="badge">
-      <ShieldCheck size={16} />
-      Privacy semplice
-    </div>
-
-    <h2>I tuoi documenti restano sotto controllo.</h2>
-
-    <p>
-      Usiamo il documento solo per leggere le informazioni utili alla scadenza.
-      Non salviamo il file caricato: salviamo solo i dati che confermi tu,
-      come titolo, data, importo, categoria e fornitore.
-    </p>
-  </div>
-
-  <div className="privacy-list">
-    <div>
-      <strong>File non salvato</strong>
-      <span>Il documento viene usato solo per l’estrazione.</span>
-    </div>
-
-    <div>
-      <strong>Conferma manuale</strong>
-      <span>Nessuna scadenza viene salvata senza il tuo ok.</span>
-    </div>
-
-    <div>
-      <strong>Eliminazione facile</strong>
-      <span>Puoi cancellare ogni scadenza quando vuoi.</span>
-    </div>
-  </div>
-</section>
-
-        <section className="roadmap">
-          <div className="roadmap-header">
-            <h2>Roadmap beta</h2>
-
-            <p>Stiamo costruendo ScadenzeFacili insieme ai primi utenti.</p>
-          </div>
-
-          <div className="roadmap-grid">
-            <div className="roadmap-item done">
-              <span>✓</span>
-
-              <div>
-                <strong>Upload PDF e foto</strong>
-                <p>Carica documenti e trova automaticamente le scadenze.</p>
-              </div>
-            </div>
-
-            <div className="roadmap-item done">
-              <span>✓</span>
-
-              <div>
-                <strong>Estrazione automatica</strong>
-                <p>Data, importo e categoria riconosciuti automaticamente.</p>
-              </div>
-            </div>
-
-            <div className="roadmap-item done">
-  <span>✓</span>
-  <div>
-    <strong>Reminder email automatici</strong>
-    <p>Ricevi una mail 7 giorni prima della scadenza.</p>
-  </div>
-</div>
-
-            <div className="roadmap-item">
-              <span>🔜</span>
-
-              <div>
-                <strong>Calendario famiglia</strong>
-                <p>Gestisci le scadenze di tutta la famiglia in un unico posto.</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        
 
         <section className="how-it-works">
           <div className="section-heading">
@@ -1399,26 +1322,6 @@ if (existingDeadline) {
               <p>Salvi la scadenza e ricevi il reminder al momento giusto.</p>
             </div>
           </div>
-        </section>
-
-        <section className="beta-section">
-          <div>
-            <h2>Vuoi provare la beta?</h2>
-
-            <p>
-              Stiamo cercando i primi utenti per testare ScadenzeFacili con
-              scadenze reali.
-            </p>
-          </div>
-
-          <a
-            className="beta-button"
-            href="https://tally.so/r/obkGNe"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Prova la beta gratis
-          </a>
         </section>
           </>
       )}
@@ -1471,6 +1374,110 @@ if (existingDeadline) {
       </Link>
     </div>
   </section>
+)}
+
+{showNewsSection && (
+  <>
+    <section className="privacy-section">
+      <div>
+        <div className="badge">
+          <ShieldCheck size={16} />
+          Privacy semplice
+        </div>
+
+        <h2>I tuoi documenti restano sotto controllo.</h2>
+
+        <p>
+          Usiamo il documento solo per leggere le informazioni utili alla scadenza.
+          Non salviamo il file caricato: salviamo solo i dati che confermi tu,
+          come titolo, data, importo, categoria e fornitore.
+        </p>
+      </div>
+
+      <div className="privacy-list">
+        <div>
+          <strong>File non salvato</strong>
+          <span>Il documento viene usato solo per l’estrazione.</span>
+        </div>
+
+        <div>
+          <strong>Conferma manuale</strong>
+          <span>Nessuna scadenza viene salvata senza il tuo ok.</span>
+        </div>
+
+        <div>
+          <strong>Eliminazione facile</strong>
+          <span>Puoi cancellare ogni scadenza quando vuoi.</span>
+        </div>
+      </div>
+    </section>
+
+    <section className="roadmap">
+      <div className="roadmap-header">
+        <h2>Roadmap beta</h2>
+
+        <p>Stiamo costruendo ScadenzeFacili insieme ai primi utenti.</p>
+      </div>
+
+      <div className="roadmap-grid">
+        <div className="roadmap-item done">
+          <span>✓</span>
+
+          <div>
+            <strong>Upload PDF e foto</strong>
+            <p>Carica documenti e trova automaticamente le scadenze.</p>
+          </div>
+        </div>
+
+        <div className="roadmap-item done">
+          <span>✓</span>
+
+          <div>
+            <strong>Estrazione automatica</strong>
+            <p>Data, importo e categoria riconosciuti automaticamente.</p>
+          </div>
+        </div>
+
+        <div className="roadmap-item done">
+          <span>✓</span>
+
+          <div>
+            <strong>Reminder email automatici</strong>
+            <p>Ricevi una mail 7 giorni prima della scadenza.</p>
+          </div>
+        </div>
+
+        <div className="roadmap-item">
+          <span>🔜</span>
+
+          <div>
+            <strong>Calendario famiglia</strong>
+            <p>Gestisci le scadenze di tutta la famiglia in un unico posto.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section className="beta-section">
+      <div>
+        <h2>Vuoi provare la beta?</h2>
+
+        <p>
+          Stiamo cercando i primi utenti per testare ScadenzeFacili con
+          scadenze reali.
+        </p>
+      </div>
+
+      <a
+        className="beta-button"
+        href="https://tally.so/r/obkGNe"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Prova la beta gratis
+      </a>
+    </section>
+  </>
 )}
 
             {session && showAddSection && (
