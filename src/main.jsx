@@ -769,7 +769,9 @@ if (existingDeadline) {
             <p>
   {session
     ? 'Controlla le prossime scadenze e aggiungine di nuove.'
-    : 'Carica una bolletta, un PDF o una mail: ScadenzeFacili trova la scadenza e ti ricorda quando pagarla.'}
+    : Capacitor.isNativePlatform()
+      ? 'Ricorda bollette, auto, documenti e pagamenti.'
+      : 'Carica una bolletta, un PDF o una mail: ScadenzeFacili trova la scadenza e ti ricorda quando pagarla.'}
 </p>
           </div>
 
