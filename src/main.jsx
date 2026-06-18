@@ -176,6 +176,9 @@ function isWithinNextDays(date, days) {
 }
 
 function HomePage() {
+  const isNativeApp = Capacitor.isNativePlatform();
+  const [activeTab, setActiveTab] = useState('add');
+
   useEffect(() => {
   document.title =
     'ScadenzeFacili - Ricorda bollette, bollo, assicurazioni e documenti';
@@ -209,7 +212,7 @@ function HomePage() {
   const [extracted, setExtracted] = useState({
   title: '',
   provider: '',
-  category: manualCategory,
+  category: 'Altro',
   dueDate: '',
   amount: null,
   notes: '',
@@ -293,6 +296,11 @@ const activeReminders = useMemo(
       ),
     [deadlines]
   );
+
+  const showDeadlinesSection = !isNativeApp || activeTab === 'deadlines';
+  const showAddSection = !isNativeApp || activeTab === 'add';
+  const showGuidesSection = !isNativeApp || activeTab === 'guides';
+  const showNewsSection = !isNativeApp || activeTab === 'news';
 
   function showToast(message, type = 'success') {
     setToast({ message, type });
@@ -660,17 +668,6 @@ if (existingDeadline) {
       console.error('Errore modifica Supabase:', error);
       showToast('Errore durante la modifica.', 'error');
 
-      function startEditingDeadline(item) {
-  setEditingDeadline(item);
-
-  setTimeout(() => {
-    editSectionRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
-  }, 50);
-}
-
       return;
     }
 
@@ -751,7 +748,7 @@ if (existingDeadline) {
 }
 
   return (
-    <main className={`page ${Capacitor.isNativePlatform() ? 'native-app' : ''}`}>
+    <main className={`page ${isNativeApp ? 'native-app' : ''}`}>
       {toast && (
         <div className={`toast ${toast.type}`}>
           {toast.message}
@@ -796,7 +793,7 @@ if (existingDeadline) {
             </div>
           </div>
         </header>
-        {session && (
+        {session && showDeadlinesSection && (
   <>
         <section className="panel urgent-panel">
   <h2>
@@ -848,6 +845,140 @@ if (existingDeadline) {
   hint="email automatiche"
 />
         </section>
+
+        <section className="panel deadlines-panel">
+          <h2>Tutte le scadenze</h2>
+
+          <div className="deadline-list">
+            {deadlines.length === 0 ? (
+              <div className="empty-state enhanced-empty">
+  <h3>Nessuna scadenza salvata</h3>
+
+  <p>
+    Inizia caricando una bolletta, un’assicurazione o aggiungendo una
+    scadenza manuale.
+  </p>
+
+  <div className="empty-actions">
+    <button
+      className="primary"
+      onClick={() => {
+        setActiveTab('add');
+
+        setTimeout(() => {
+          fileInputRef.current?.click();
+        }, 100);
+      }}
+    >
+      <Upload size={18} />
+      Carica PDF o foto
+    </button>
+
+    <button
+  className="secondary"
+  onClick={() => {
+    setActiveTab('add');
+
+    setTimeout(() => {
+      document
+        .querySelector('.manual-panel')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }}
+>
+  Aggiungi manualmente
+</button>
+  </div>
+</div>
+            ) : (
+              deadlines
+                .slice()
+                .sort((a, b) => {
+  const priorityA = getStatusPriority(a.dueDate);
+  const priorityB = getStatusPriority(b.dueDate);
+
+  if (priorityA !== priorityB) {
+    return priorityA - priorityB;
+  }
+
+  return new Date(a.dueDate) - new Date(b.dueDate);
+})
+                .map((item) => (
+                  <article
+                    key={item.id}
+                    className={`deadline-row ${getDeadlineStatus(
+                      item.dueDate
+                    )}`}
+                  >
+                    <div>
+                      <h3>{item.title}</h3>
+
+                      <p>
+                        {item.provider} ·{' '}
+                        <span className={getCategoryClass(item.category)}>
+                          {item.category}
+                        </span>{' '}
+                        · {formatDate(item.dueDate)}
+                        <br />
+                        <span className="days-label">
+                          {getDaysUntilLabel(item.dueDate)}
+                        </span>
+                      </p>
+
+                    {item.notes && (
+                      <p className="deadline-notes">    
+                        {item.notes}
+                      </p>
+                     )}
+
+                    </div>
+
+                    <div className="deadline-actions">
+                      <span
+                        className={`status-pill ${getDeadlineStatus(
+                          item.dueDate
+                        )}`}
+                      >
+                        {getDeadlineStatusLabel(item.dueDate)}
+                      </span>
+
+                      <strong>{formatAmount(item.amount)}</strong>
+
+
+                      <span
+  className={`reminder-pill ${
+    item.reminderSentAt ? 'sent' : getDeadlineStatus(item.dueDate) === 'expired' ? 'expired' : ''
+  }`}
+>
+  {item.reminderSentAt
+    ? 'Reminder inviato'
+    : getDeadlineStatus(item.dueDate) === 'expired'
+      ? 'Scadenza passata'
+      : 'Email 7 giorni prima'}
+</span>
+
+                      <button
+                        className="icon-button"
+                        onClick={() => startEditingDeadline(item)}
+                        aria-label="Modifica scadenza"
+                      >
+                        <Pencil size={16} />
+                      </button>
+
+                      <button
+                        className="icon-button"
+                        onClick={() => setDeadlineToDelete(item)}
+                        aria-label="Elimina scadenza"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </article>
+                ))
+            )}
+          </div>
+        </section>
+
           </>
 )}
 
@@ -882,10 +1013,11 @@ if (existingDeadline) {
           </div>
         )}
 
-        <section
-  className={`upload-card ${session ? 'compact-upload' : ''} ${
-    isDragging ? 'dragging' : ''
-  }`}
+        {showAddSection && (
+        <>
+          <section className={`upload-card ${session ? 'compact-upload' : ''} ${
+          isDragging ? 'dragging' : ''
+        }`}
           onDragOver={(e) => {
             e.preventDefault();
             setIsDragging(true);
@@ -1126,6 +1258,8 @@ if (existingDeadline) {
             </div>
           </section>
         )}
+          </>
+        )}
 
         {!session && (
           <>
@@ -1267,54 +1401,6 @@ if (existingDeadline) {
           </div>
         </section>
 
-        <section className="panel guides-section">
-  <div className="section-heading compact">
-    <h2>Guide utili</h2>
-    <p>
-      Consigli pratici per gestire bollette, auto, documenti e scadenze di casa.
-    </p>
-  </div>
-
-  <div className="guide-card">
-    <div>
-      <strong>Come ricordare le scadenze delle bollette</strong>
-      <p>
-        Un metodo semplice per non dimenticare luce, gas, telefono e internet.
-      </p>
-    </div>
-
-    <Link className="secondary" to="/guide/scadenze-bollette">
-      Leggi guida
-    </Link>
-  </div>
-
-  <div className="guide-card">
-    <div>
-      <strong>Promemoria assicurazione auto: come non dimenticare il rinnovo</strong>
-      <p>
-        Un metodo semplice per ricordare la scadenza della polizza auto.
-      </p>
-    </div>
-
-    <Link className="secondary" to="/guide/promemoria-assicurazione-auto">
-      Leggi guida
-    </Link>
-  </div>
-
-  <div className="guide-card">
-    <div>
-      <strong>Come ricordare la scadenza della revisione auto</strong>
-      <p>
-        Un metodo semplice per non dimenticare revisione, controlli e appuntamenti.
-      </p>
-    </div>
-
-    <Link className="secondary" to="/guide/scadenza-revisione-auto">
-      Leggi guida
-    </Link>
-  </div>
-</section>
-
         <section className="beta-section">
           <div>
             <h2>Vuoi provare la beta?</h2>
@@ -1334,11 +1420,60 @@ if (existingDeadline) {
             Prova la beta gratis
           </a>
         </section>
-
           </>
       )}
 
-      {session && (
+{showGuidesSection && (
+  <section className="panel guides-section">
+    <div className="section-heading compact">
+      <h2>Guide utili</h2>
+      <p>
+        Consigli pratici per gestire bollette, auto, documenti e scadenze di casa.
+      </p>
+    </div>
+
+    <div className="guide-card">
+      <div>
+        <strong>Come ricordare le scadenze delle bollette</strong>
+        <p>
+          Un metodo semplice per non dimenticare luce, gas, telefono e internet.
+        </p>
+      </div>
+
+      <Link className="secondary" to="/guide/scadenze-bollette">
+        Leggi guida
+      </Link>
+    </div>
+
+    <div className="guide-card">
+      <div>
+        <strong>Promemoria assicurazione auto: come non dimenticare il rinnovo</strong>
+        <p>
+          Un metodo semplice per ricordare la scadenza della polizza auto.
+        </p>
+      </div>
+
+      <Link className="secondary" to="/guide/promemoria-assicurazione-auto">
+        Leggi guida
+      </Link>
+    </div>
+
+    <div className="guide-card">
+      <div>
+        <strong>Come ricordare la scadenza della revisione auto</strong>
+        <p>
+          Un metodo semplice per non dimenticare revisione, controlli e appuntamenti.
+        </p>
+      </div>
+
+      <Link className="secondary" to="/guide/scadenza-revisione-auto">
+        Leggi guida
+      </Link>
+    </div>
+  </section>
+)}
+
+            {session && showAddSection && (
   <>
        <section className="panel manual-panel">
   <div className="section-heading compact">
@@ -1527,167 +1662,50 @@ if (existingDeadline) {
         )}
 
 
-        <section className="panel deadlines-panel">
-          <h2>Tutte le scadenze</h2>
-
-          <div className="deadline-list">
-            {deadlines.length === 0 ? (
-              <div className="empty-state enhanced-empty">
-  <h3>Nessuna scadenza salvata</h3>
-
-  <p>
-    Inizia caricando una bolletta, un’assicurazione o aggiungendo una
-    scadenza manuale.
-  </p>
-
-  <div className="empty-actions">
-    <button
-      className="primary"
-      onClick={() => fileInputRef.current?.click()}
-    >
-      <Upload size={18} />
-      Carica PDF o foto
-    </button>
-
-    <button
-      className="secondary"
-      onClick={() => {
-        document
-          .querySelector('.manual-panel')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }}
-    >
-      Aggiungi manualmente
-    </button>
-  </div>
-</div>
-            ) : (
-              deadlines
-                .slice()
-                .sort((a, b) => {
-  const priorityA = getStatusPriority(a.dueDate);
-  const priorityB = getStatusPriority(b.dueDate);
-
-  if (priorityA !== priorityB) {
-    return priorityA - priorityB;
-  }
-
-  return new Date(a.dueDate) - new Date(b.dueDate);
-})
-                .map((item) => (
-                  <article
-                    key={item.id}
-                    className={`deadline-row ${getDeadlineStatus(
-                      item.dueDate
-                    )}`}
-                  >
-                    <div>
-                      <h3>{item.title}</h3>
-
-                      <p>
-                        {item.provider} ·{' '}
-                        <span className={getCategoryClass(item.category)}>
-                          {item.category}
-                        </span>{' '}
-                        · {formatDate(item.dueDate)}
-                        <br />
-                        <span className="days-label">
-                          {getDaysUntilLabel(item.dueDate)}
-                        </span>
-                      </p>
-
-                    {item.notes && (
-                      <p className="deadline-notes">    
-                        {item.notes}
-                      </p>
-                     )}
-
-                    </div>
-
-                    <div className="deadline-actions">
-                      <span
-                        className={`status-pill ${getDeadlineStatus(
-                          item.dueDate
-                        )}`}
-                      >
-                        {getDeadlineStatusLabel(item.dueDate)}
-                      </span>
-
-                      <strong>{formatAmount(item.amount)}</strong>
-
-
-                      <span
-  className={`reminder-pill ${
-    item.reminderSentAt ? 'sent' : getDeadlineStatus(item.dueDate) === 'expired' ? 'expired' : ''
-  }`}
->
-  {item.reminderSentAt
-    ? 'Reminder inviato'
-    : getDeadlineStatus(item.dueDate) === 'expired'
-      ? 'Scadenza passata'
-      : 'Email 7 giorni prima'}
-</span>
-
-                      <button
-                        className="icon-button"
-                        onClick={() => startEditingDeadline(item)}
-                        aria-label="Modifica scadenza"
-                      >
-                        <Pencil size={16} />
-                      </button>
-
-                      <button
-                        className="icon-button"
-                        onClick={() => setDeadlineToDelete(item)}
-                        aria-label="Elimina scadenza"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </article>
-                ))
-            )}
-          </div>
-        </section>
+        
           </>
 )}
             </div>
 
-      {session && (
-        <nav className="mobile-tabbar" aria-label="Navigazione rapida">
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload size={18} />
-            <span>Carica</span>
-          </button>
+      {isNativeApp && (
+  <nav className="mobile-tabbar" aria-label="Navigazione app">
+    <button
+      type="button"
+      className={activeTab === 'deadlines' ? 'active' : ''}
+      onClick={() => setActiveTab('deadlines')}
+    >
+      <CalendarDays size={18} />
+      <span>Scadenze</span>
+    </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .querySelector('.manual-panel')
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-          >
-            <Plus size={18} />
-            <span>Manuale</span>
-          </button>
+    <button
+      type="button"
+      className={activeTab === 'add' ? 'active' : ''}
+      onClick={() => setActiveTab('add')}
+    >
+      <Upload size={18} />
+      <span>Aggiungi</span>
+    </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .querySelector('.deadlines-panel')
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-          >
-            <CalendarDays size={18} />
-            <span>Scadenze</span>
-          </button>
-        </nav>
-      )}
+    <button
+      type="button"
+      className={activeTab === 'guides' ? 'active' : ''}
+      onClick={() => setActiveTab('guides')}
+    >
+      <FileText size={18} />
+      <span>Guide</span>
+    </button>
+
+    <button
+      type="button"
+      className={activeTab === 'news' ? 'active' : ''}
+      onClick={() => setActiveTab('news')}
+    >
+      <Sparkles size={18} />
+      <span>Novità</span>
+    </button>
+  </nav>
+)}
     </main>
   );
 }

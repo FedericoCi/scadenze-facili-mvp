@@ -1288,3 +1288,28 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     padding: 10px 12px;
   }
 }
+@media (max-width: 720px) {
+  .mobile-tabbar {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .mobile-tabbar button {
+    background: #f8fafc;
+    color: #64748b;
+  }
+
+  .mobile-tabbar button.active {
+    background: #0f172a;
+    color: #ffffff;
+  }
+
+  .mobile-tabbar button:first-child {
+    background: #f8fafc;
+    color: #64748b;
+  }
+
+  .mobile-tabbar button:first-child.active {
+    background: #0f172a;
+    color: #ffffff;
+  }
+}
