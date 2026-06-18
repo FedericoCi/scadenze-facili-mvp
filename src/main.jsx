@@ -19,6 +19,10 @@ import {
 import './styles.css';
 import { supabase } from './supabase';
 
+const API_BASE_URL = Capacitor.isNativePlatform()
+  ? 'https://scadenzefacili.vercel.app'
+  : '';
+
 const initialDeadlines = [
   {
     id: 1,
@@ -350,7 +354,7 @@ const activeReminders = useMemo(
       ]);
     }, 1800);
 
-    const response = await fetch('/api/extract-deadline', {
+    const response = await fetch(`${API_BASE_URL}/api/extract-deadline`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -407,7 +411,7 @@ const activeReminders = useMemo(
       setAnalysisSteps((steps) => [...steps, 'Lettura testo dal PDF']);
     }, 800);
 
-    const response = await fetch('/api/parse-pdf', {
+    const response = await fetch(`${API_BASE_URL}/api/parse-pdf`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/pdf',
