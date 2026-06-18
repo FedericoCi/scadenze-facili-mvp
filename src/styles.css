@@ -1195,3 +1195,58 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     color: #ffffff;
   }
 }
+@media (max-width: 720px) {
+  .native-app.page {
+    padding-top: 18px;
+  }
+
+  .native-app .header {
+    margin-bottom: 18px;
+  }
+
+  .native-app .brand-row h1 {
+    font-size: 34px;
+  }
+
+  .native-app .beta-badge {
+    font-size: 12px;
+    padding: 7px 11px;
+  }
+
+  .native-app .header p {
+    font-size: 18px;
+    line-height: 1.35;
+  }
+
+  .native-app .upload-card {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .native-app .upload-copy p {
+    font-size: 19px;
+    line-height: 1.38;
+  }
+
+  .native-app .upload-copy .badge {
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  .native-app .upload-copy .actions button {
+    min-height: 54px;
+  }
+
+  .native-app .examples {
+    padding: 16px;
+  }
+
+  .native-app .examples h3 {
+    font-size: 20px;
+  }
+
+  .native-app .examples div {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+}

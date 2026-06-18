@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { Capacitor } from '@capacitor/core';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import {
   Upload,
   Mail,
@@ -749,7 +751,7 @@ if (existingDeadline) {
 }
 
   return (
-    <main className="page">
+    <main className={`page ${Capacitor.isNativePlatform() ? 'native-app' : ''}`}>
       {toast && (
         <div className={`toast ${toast.type}`}>
           {toast.message}
@@ -832,7 +834,7 @@ if (existingDeadline) {
 
           <Stat
             icon={<FileText size={20} />}
-            llabel="Totale da pagare"
+            label="Totale da pagare"
             value={formatAmount(monthTotal)}
             hint="importi conosciuti"
           />
@@ -1647,7 +1649,43 @@ if (existingDeadline) {
         </section>
           </>
 )}
-      </div>
+            </div>
+
+      {session && (
+        <nav className="mobile-tabbar" aria-label="Navigazione rapida">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload size={18} />
+            <span>Carica</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              document
+                .querySelector('.manual-panel')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            <Plus size={18} />
+            <span>Manuale</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              document
+                .querySelector('.deadlines-panel')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            <CalendarDays size={18} />
+            <span>Scadenze</span>
+          </button>
+        </nav>
+      )}
     </main>
   );
 }
@@ -1883,43 +1921,7 @@ function GuideRevisioneAutoPage() {
             </Link>
           </div>
         </section>
-            </div>
-
-      {session && (
-        <nav className="mobile-tabbar" aria-label="Navigazione rapida">
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload size={18} />
-            <span>Carica</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .querySelector('.manual-panel')
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-          >
-            <Plus size={18} />
-            <span>Manuale</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .querySelector('.deadlines-panel')
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-          >
-            <CalendarDays size={18} />
-            <span>Scadenze</span>
-          </button>
-        </nav>
-      )}
+        </div>
     </main>
   );
 }
@@ -1957,6 +1959,11 @@ createRoot(document.getElementById('root')).render(
     <Analytics />
   </>
 );
+if (Capacitor.isNativePlatform()) {
+  StatusBar.setOverlaysWebView({ overlay: false });
+  StatusBar.setStyle({ style: Style.Light });
+  StatusBar.setBackgroundColor({ color: '#f8fafc' });
+}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
