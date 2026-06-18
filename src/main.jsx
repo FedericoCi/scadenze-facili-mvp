@@ -301,10 +301,23 @@ const activeReminders = useMemo(
     [deadlines]
   );
 
-  const showDeadlinesSection = !isNativeApp || activeTab === 'deadlines';
-  const showAddSection = !isNativeApp || activeTab === 'add';
-  const showGuidesSection = !isNativeApp || activeTab === 'guides';
-  const showNewsSection = !isNativeApp || activeTab === 'news';
+  const useTabbedLayout = isNativeApp;
+
+const showDeadlinesSection = useTabbedLayout
+  ? activeTab === 'deadlines'
+  : true;
+
+const showAddSection = useTabbedLayout
+  ? activeTab === 'add'
+  : true;
+
+const showGuidesSection = useTabbedLayout
+  ? activeTab === 'guides'
+  : true;
+
+const showNewsSection = useTabbedLayout
+  ? activeTab === 'news'
+  : true;
 
   function showToast(message, type = 'success') {
     setToast({ message, type });
@@ -797,6 +810,23 @@ if (existingDeadline) {
             </div>
           </div>
         </header>
+
+{!session && showDeadlinesSection && (
+  <section className="panel login-reminder-panel">
+    <div>
+      <h2>Accedi per vedere le tue scadenze</h2>
+
+      <p>
+        Salva bollette, documenti, assicurazioni e promemoria in un unico posto.
+      </p>
+    </div>
+
+    <button className="primary" onClick={() => setShowLogin(true)}>
+      Accedi
+    </button>
+  </section>
+)}
+
         {session && showDeadlinesSection && (
   <>
         <section className="panel urgent-panel">
@@ -1265,7 +1295,7 @@ if (existingDeadline) {
           </>
         )}
 
-        {!session && (
+        {!session && showAddSection && (
           <>
 
         <section className="benefits">

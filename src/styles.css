@@ -1313,3 +1313,33 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     color: #ffffff;
   }
 }
+.login-reminder-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.login-reminder-panel h2 {
+  margin: 0 0 8px;
+}
+
+.login-reminder-panel p {
+  margin: 0;
+  color: #64748b;
+}
+
+.login-reminder-panel button {
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .login-reminder-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .login-reminder-panel button {
+    width: 100%;
+  }
+}
