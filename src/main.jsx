@@ -791,11 +791,13 @@ if (existingDeadline) {
 
           <div className="header-actions">
             {!session ? (
-              <button className="secondary" onClick={() => setShowLogin(true)}>
-                Accedi
-              </button>
-            ) : (
-              <div className="user-box">
+  !isNativeApp && (
+    <button className="secondary" onClick={() => setShowLogin(true)}>
+      Accedi
+    </button>
+  )
+) : (
+  <div className="user-box">
                 <span>{session.user.email}</span>
 
                 <button className="secondary" onClick={signOut}>
@@ -1712,37 +1714,45 @@ if (existingDeadline) {
   <nav className="mobile-tabbar" aria-label="Navigazione app">
     <button
       type="button"
-      className={activeTab === 'deadlines' ? 'active' : ''}
+      className={`mobile-tabbar__item ${
+        activeTab === 'deadlines' ? 'is-active' : ''
+      }`}
       onClick={() => setActiveTab('deadlines')}
     >
-      <CalendarDays size={18} />
+      <CalendarDays size={20} strokeWidth={2.2} />
       <span>Scadenze</span>
     </button>
 
     <button
       type="button"
-      className={activeTab === 'add' ? 'active' : ''}
+      className={`mobile-tabbar__item ${
+        activeTab === 'add' ? 'is-active' : ''
+      }`}
       onClick={() => setActiveTab('add')}
     >
-      <Upload size={18} />
+      <Upload size={20} strokeWidth={2.2} />
       <span>Aggiungi</span>
     </button>
 
     <button
       type="button"
-      className={activeTab === 'guides' ? 'active' : ''}
+      className={`mobile-tabbar__item ${
+        activeTab === 'guides' ? 'is-active' : ''
+      }`}
       onClick={() => setActiveTab('guides')}
     >
-      <FileText size={18} />
+      <FileText size={20} strokeWidth={2.2} />
       <span>Guide</span>
     </button>
 
     <button
       type="button"
-      className={activeTab === 'news' ? 'active' : ''}
+      className={`mobile-tabbar__item ${
+        activeTab === 'news' ? 'is-active' : ''
+      }`}
       onClick={() => setActiveTab('news')}
     >
-      <Sparkles size={18} />
+      <Sparkles size={20} strokeWidth={2.2} />
       <span>Novità</span>
     </button>
   </nav>
