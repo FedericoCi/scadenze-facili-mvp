@@ -1353,3 +1353,263 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     margin-bottom: 14px;
   }
 }
+
+/* Migliora form manuale dentro app iOS */
+@media (max-width: 720px) {
+  .native-app .manual-panel {
+    padding: 22px;
+    border-radius: 28px;
+    gap: 18px;
+    margin-bottom: 120px;
+  }
+
+  .native-app .manual-panel .section-heading.compact h2 {
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 8px;
+  }
+
+  .native-app .manual-panel .section-heading.compact p {
+    font-size: 18px;
+    line-height: 1.35;
+    color: #64748b;
+  }
+
+  .native-app .manual-form {
+    gap: 12px;
+  }
+
+  .native-app .manual-row,
+  .native-app .notes-row {
+    gap: 10px;
+  }
+
+  .native-app .manual-row input,
+  .native-app .manual-row select,
+  .native-app .notes-row textarea {
+    min-height: 54px;
+    border-radius: 18px;
+    font-size: 17px;
+    padding: 14px 16px;
+    background: #ffffff;
+  }
+
+  .native-app .manual-row input[type="date"] {
+    color: #64748b;
+    background: #ffffff;
+  }
+
+  .native-app .notes-row textarea {
+    min-height: 104px;
+    line-height: 1.35;
+  }
+
+  .native-app .save-manual-button {
+    min-height: 58px;
+    border-radius: 22px;
+    font-size: 17px;
+    margin-top: 4px;
+  }
+}
+/* Form manuale - versione più ordinata per app iOS */
+@media (max-width: 720px) {
+  .native-app .manual-panel {
+    padding: 22px;
+    border-radius: 30px;
+    gap: 18px;
+    overflow: hidden;
+  }
+
+  .native-app .manual-panel .section-heading.compact h2 {
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 8px;
+  }
+
+  .native-app .manual-panel .section-heading.compact p {
+    font-size: 18px;
+    line-height: 1.35;
+    margin: 0;
+    color: #64748b;
+  }
+
+  .native-app .manual-form {
+    display: grid;
+    gap: 12px;
+  }
+
+  .native-app .manual-row,
+  .native-app .notes-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .native-app .manual-row input,
+  .native-app .manual-row select,
+  .native-app .notes-row textarea {
+    width: 100%;
+    max-width: 100%;
+    min-height: 56px;
+    border-radius: 20px;
+    border: 1px solid #d5deeb;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 17px;
+    line-height: 1.2;
+    padding: 14px 18px;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .native-app .manual-row select {
+    background:
+      linear-gradient(45deg, transparent 50%, #0f172a 50%) calc(100% - 22px) 50% / 7px 7px no-repeat,
+      linear-gradient(135deg, #0f172a 50%, transparent 50%) calc(100% - 16px) 50% / 7px 7px no-repeat,
+      #ffffff;
+    padding-right: 44px;
+  }
+
+  .native-app .manual-row input[type="date"] {
+    color: #64748b;
+    min-height: 56px;
+  }
+
+  .native-app .manual-row input[type="date"]:before {
+    content: "Data di scadenza";
+    color: #a3a3a3;
+  }
+
+  .native-app .manual-row input[type="date"]:valid:before,
+  .native-app .manual-row input[type="date"]:focus:before {
+    content: "";
+  }
+
+  .native-app .notes-row textarea {
+    min-height: 104px;
+    resize: none;
+    line-height: 1.35;
+  }
+
+  .native-app .save-manual-button {
+    width: 100%;
+    min-height: 60px;
+    border-radius: 24px;
+    font-size: 18px;
+    font-weight: 800;
+    margin-top: 4px;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+  }
+}
+/* Etichette chiare per categoria e data nel form manuale */
+@media (max-width: 720px) {
+  .native-app .manual-row select {
+    color: #64748b;
+  }
+
+  .native-app .manual-row select:has(option:checked[value="Casa"]),
+  .native-app .manual-row select:has(option:checked[value="Auto"]),
+  .native-app .manual-row select:has(option:checked[value="Documenti"]),
+  .native-app .manual-row select:has(option:checked[value="Altro"]) {
+    color: #0f172a;
+  }
+
+  .native-app .manual-date-wrapper {
+    width: 100%;
+    min-height: 56px;
+    border-radius: 20px;
+    border: 1px solid #d5deeb;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 18px;
+  }
+
+  .native-app .manual-date-wrapper span {
+    color: #64748b;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  .native-app .manual-date-wrapper input {
+    border: 0;
+    padding: 0;
+    min-height: auto;
+    border-radius: 0;
+    text-align: right;
+    color: #0f172a;
+    background: transparent;
+  }
+}
+@media (max-width: 720px) {
+  .native-app .manual-row select {
+    color: #94a3b8;
+  }
+
+  .native-app .manual-row select:valid {
+    color: #0f172a;
+  }
+}
+/* Card manuale richiudibile */
+.manual-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.manual-collapsed h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  letter-spacing: -0.03em;
+}
+
+.manual-collapsed p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.manual-close-button {
+  width: 100%;
+  margin-top: 2px;
+}
+
+@media (max-width: 720px) {
+  .native-app .manual-collapsed {
+    display: grid;
+    gap: 16px;
+  }
+
+  .native-app .manual-collapsed h2 {
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  .native-app .manual-collapsed p {
+    font-size: 16px;
+  }
+
+  .native-app .manual-collapsed button {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 20px;
+  }
+}
+.add-trust-pill {
+  width: fit-content;
+  margin-bottom: -6px;
+}
+
+@media (max-width: 720px) {
+  .native-app .add-trust-pill {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: -4px;
+  }
+}

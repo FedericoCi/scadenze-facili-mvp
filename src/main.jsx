@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { App as CapacitorApp } from '@capacitor/app';
 import {
   Upload,
   Mail,
@@ -195,11 +196,12 @@ function HomePage() {
   const [showEmailPaste, setShowEmailPaste] = useState(false);
   const [emailText, setEmailText] = useState('');
   const [manualTitle, setManualTitle] = useState('');
+  const [showManualForm, setShowManualForm] = useState(false);
   const [manualDate, setManualDate] = useState('');
   const [manualAmount, setManualAmount] = useState('');
   const [manualNotes, setManualNotes] = useState('');
   const [manualProvider, setManualProvider] = useState('');
-  const [manualCategory, setManualCategory] = useState('Altro');
+  const [manualCategory, setManualCategory] = useState('');
   const [editingDeadline, setEditingDeadline] = useState(null);
   const [deadlineToDelete, setDeadlineToDelete] = useState(null);
   const [session, setSession] = useState(null);
@@ -216,7 +218,7 @@ function HomePage() {
   const [extracted, setExtracted] = useState({
   title: '',
   provider: '',
-  category: 'Altro',
+  category: '',
   dueDate: '',
   amount: null,
   notes: '',
@@ -267,7 +269,64 @@ function HomePage() {
       loadDeadlines(session?.user?.id);
     });
 
-    return () => subscription.unsubscribe();
+        let appUrlOpenListener;
+
+    if (Capacitor.isNativePlatform()) {
+      CapacitorApp.addListener('appUrlOpen', async ({ url }) => {
+        try {
+          const parsedUrl = new URL(url);
+
+          const code = parsedUrl.searchParams.get('code');
+
+          if (code) {
+            const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+            if (error) {
+              console.error('Errore login app:', error);
+              showToast('Errore durante il login.', 'error');
+              return;
+            }
+
+            setActiveTab('add');
+            setShowLogin(false);
+            showToast('Accesso effettuato.');
+            return;
+          }
+
+          const hash = parsedUrl.hash.replace('#', '');
+          const params = new URLSearchParams(hash);
+
+          const accessToken = params.get('access_token');
+          const refreshToken = params.get('refresh_token');
+
+          if (accessToken && refreshToken) {
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+
+            if (error) {
+              console.error('Errore sessione app:', error);
+              showToast('Errore durante il login.', 'error');
+              return;
+            }
+
+            setActiveTab('add');
+            setShowLogin(false);
+            showToast('Accesso effettuato.');
+          }
+        } catch (error) {
+          console.error('Errore apertura link app:', error);
+        }
+      }).then((listener) => {
+        appUrlOpenListener = listener;
+      });
+    }
+
+        return () => {
+      subscription.unsubscribe();
+      appUrlOpenListener?.remove();
+    };
   }, []);
 
   const monthTotal = useMemo(
@@ -326,6 +385,18 @@ const showNewsSection = useTabbedLayout
       setToast(null);
     }, 3000);
   }
+
+  function requireLoginBeforeAdd() {
+  if (session) {
+    return true;
+  }
+
+  setActiveTab('add');
+  setShowLogin(true);
+  showToast('Accedi per caricare documenti e salvare le scadenze.', 'error');
+
+  return false;
+}
 
   async function deadlineAlreadyExists({ title, dueDate }) {
   const cleanTitle = title.trim();
@@ -561,7 +632,20 @@ if (existingDeadline) {
       return;
     }
 
-    if (!manualTitle || !manualDate) return;
+    if (!manualTitle.trim()) {
+  showToast('Inserisci un titolo per la scadenza.', 'error');
+  return;
+}
+
+if (!manualDate) {
+  showToast('Inserisci la data di scadenza.', 'error');
+  return;
+}
+
+if (!manualCategory) {
+  showToast('Scegli una categoria.', 'error');
+  return;
+}
 
     setIsSavingManual(true);
 
@@ -637,10 +721,11 @@ if (existingDeadline) {
     
       setManualTitle('');
       setManualProvider('');
-      setManualCategory('Altro');
+      setManualCategory('');
       setManualDate('');
       setManualAmount('');
       setManualNotes('');
+      setShowManualForm(false);
   }
 
   async function deleteDeadline(id) {
@@ -725,8 +810,10 @@ if (existingDeadline) {
     const { error } = await supabase.auth.signInWithOtp({
       email: authEmail,
       options: {
-        emailRedirectTo: window.location.origin,
-      },
+  emailRedirectTo: Capacitor.isNativePlatform()
+    ? 'scadenzefacili://login'
+    : window.location.origin,
+},
     });
 
     if (error) {
@@ -805,11 +892,6 @@ if (existingDeadline) {
                 </button>
               </div>
             )}
-
-            <div className="trust-pill">
-              <ShieldCheck size={16} />
-              File non salvato dopo l’estrazione
-            </div>
           </div>
         </header>
 
@@ -895,13 +977,15 @@ if (existingDeadline) {
     scadenza manuale.
   </p>
 
-  <div className="empty-actions">
-    <button
+      <div className="empty-actions">
+        <button
       className="primary"
       onClick={() => {
         setActiveTab('add');
 
         setTimeout(() => {
+          if (!requireLoginBeforeAdd()) return;
+
           fileInputRef.current?.click();
         }, 100);
       }}
@@ -1051,6 +1135,10 @@ if (existingDeadline) {
 
         {showAddSection && (
         <>
+        <div className="trust-pill add-trust-pill">
+  <ShieldCheck size={16} />
+  File non salvato dopo l’estrazione
+</div>
           <section className={`upload-card ${session ? 'compact-upload' : ''} ${
           isDragging ? 'dragging' : ''
         }`}
@@ -1099,20 +1187,28 @@ if (existingDeadline) {
 
             <div className="actions">
               <button
-                className="primary"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload size={20} />
-                Carica PDF o foto
-              </button>
+  className="primary"
+  onClick={() => {
+    if (!requireLoginBeforeAdd()) return;
+
+    fileInputRef.current?.click();
+  }}
+>
+  <Upload size={20} />
+  Carica PDF o foto
+</button>
 
               <button
-                className="secondary"
-                onClick={() => setShowEmailPaste(!showEmailPaste)}
-              >
-                <Mail size={20} />
-                Incolla testo mail
-              </button>
+  className="secondary"
+  onClick={() => {
+    if (!requireLoginBeforeAdd()) return;
+
+    setShowEmailPaste(!showEmailPaste);
+  }}
+>
+  <Mail size={20} />
+  Incolla testo mail
+</button>
             </div>
 
             <small>
@@ -1212,33 +1308,38 @@ if (existingDeadline) {
   <label>
     <span>Categoria</span>
     <select
-      value={extracted.category}
-      onChange={(e) =>
-        setExtracted({
-          ...extracted,
-          category: e.target.value,
-        })
-      }
-    >
-      <option value="Casa">Casa</option>
-      <option value="Auto">Auto</option>
-      <option value="Documenti">Documenti</option>
-      <option value="Altro">Altro</option>
-    </select>
+  value={manualCategory}
+  onChange={(e) => setManualCategory(e.target.value)}
+>
+  <option value="">Categoria</option>
+  <option value="Casa">Casa</option>
+  <option value="Auto">Auto</option>
+  <option value="Documenti">Documenti</option>
+  <option value="Altro">Altro</option>
+</select>
   </label>
 
   <label>
     <span>Scadenza</span>
     <input
-      type="date"
-      value={extracted.dueDate}
-      onChange={(e) =>
-        setExtracted({
-          ...extracted,
-          dueDate: e.target.value,
-        })
-      }
-    />
+  type="text"
+  placeholder="Data di scadenza"
+  value={extracted.dueDate}
+  onFocus={(e) => {
+    e.target.type = 'date';
+  }}
+  onBlur={(e) => {
+    if (!e.target.value) {
+      e.target.type = 'text';
+    }
+  }}
+  onChange={(e) =>
+    setExtracted({
+      ...extracted,
+      dueDate: e.target.value,
+    })
+  }
+/>
   </label>
 
   <label>
@@ -1519,68 +1620,106 @@ if (existingDeadline) {
             {session && showAddSection && (
   <>
        <section className="panel manual-panel">
-  <div className="section-heading compact">
-    <h2>Aggiungi manualmente</h2>
-    <p>
-      Inserisci una scadenza anche senza caricare un documento.
-    </p>
-  </div>
-
-  <div className="manual-form">
-    <div className="manual-row">
-      <input
-        placeholder="Titolo"
-        value={manualTitle}
-        onChange={(e) => setManualTitle(e.target.value)}
-      />
-
-      <input
-        placeholder="Fornitore"
-        value={manualProvider}
-        onChange={(e) => setManualProvider(e.target.value)}
-      />
-
-      <select
-        value={manualCategory}
-        onChange={(e) => setManualCategory(e.target.value)}
-      >
-        <option value="Casa">Casa</option>
-        <option value="Auto">Auto</option>
-        <option value="Documenti">Documenti</option>
-        <option value="Altro">Altro</option>
-      </select>
-
-      <input
-        type="date"
-        value={manualDate}
-        onChange={(e) => setManualDate(e.target.value)}
-      />
-
-      <input
-        type="number"
-        placeholder="Importo"
-        value={manualAmount}
-        onChange={(e) => setManualAmount(e.target.value)}
-      />
-    </div>
-
-    <div className="manual-row notes-row">
-      <textarea
-        placeholder="Note facoltative, es. pagamento già impostato, rinnovo automatico..."
-        value={manualNotes}
-        onChange={(e) => setManualNotes(e.target.value)}
-      />
+  {!showManualForm ? (
+    <div className="manual-collapsed">
+      <div>
+        <h2>Non hai un documento?</h2>
+        <p>
+          Puoi aggiungere una scadenza manualmente in pochi secondi.
+        </p>
+      </div>
 
       <button
-        className="primary save-manual-button"
-        onClick={saveManual}
-        disabled={isSavingManual}
+        className="secondary"
+        onClick={() => setShowManualForm(true)}
       >
-        <Plus size={16} />
-        {isSavingManual ? 'Salvataggio...' : 'Salva scadenza'}
+        <Plus size={18} />
+        Aggiungi manualmente
       </button>
     </div>
-  </div>
+  ) : (
+    <>
+      <div className="section-heading compact">
+        <h2>Aggiungi manualmente</h2>
+        <p>
+          Inserisci una scadenza anche senza caricare un documento.
+        </p>
+      </div>
+
+      <div className="manual-form">
+        <div className="manual-row">
+          <input
+            placeholder="Titolo"
+            value={manualTitle}
+            onChange={(e) => setManualTitle(e.target.value)}
+          />
+
+          <input
+            placeholder="Fornitore"
+            value={manualProvider}
+            onChange={(e) => setManualProvider(e.target.value)}
+          />
+
+          <select
+            value={manualCategory}
+            onChange={(e) => setManualCategory(e.target.value)}
+          >
+            <option value="">Categoria</option>
+            <option value="Casa">Casa</option>
+            <option value="Auto">Auto</option>
+            <option value="Documenti">Documenti</option>
+            <option value="Altro">Altro</option>
+          </select>
+
+          <input
+            type="text"
+            placeholder="Data di scadenza"
+            value={manualDate}
+            onFocus={(e) => {
+              e.target.type = 'date';
+            }}
+            onBlur={(e) => {
+              if (!e.target.value) {
+                e.target.type = 'text';
+              }
+            }}
+            onChange={(e) => setManualDate(e.target.value)}
+          />
+
+          <input
+            type="number"
+            placeholder="Importo"
+            value={manualAmount}
+            onChange={(e) => setManualAmount(e.target.value)}
+          />
+        </div>
+
+        <div className="manual-row notes-row">
+          <textarea
+            placeholder="Note facoltative, es. pagamento già impostato, rinnovo automatico..."
+            value={manualNotes}
+            onChange={(e) => setManualNotes(e.target.value)}
+          />
+
+          <button
+            className="primary save-manual-button"
+            onClick={saveManual}
+            disabled={isSavingManual}
+          >
+            <Plus size={16} />
+            {isSavingManual ? 'Salvataggio...' : 'Salva scadenza'}
+          </button>
+        </div>
+
+        <button
+          className="ghost manual-close-button"
+          onClick={() => setShowManualForm(false)}
+        >
+          Chiudi inserimento manuale
+        </button>
+      </div>
+    </>
+  )}
 </section>
 
         {editingDeadline && (
