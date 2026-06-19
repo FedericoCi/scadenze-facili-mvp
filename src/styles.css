@@ -1787,3 +1787,175 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     color: #64748b;
   }
 }
+/* Campo data manuale leggibile e stabile su iOS */
+@media (max-width: 720px) {
+  .native-app .manual-date-field {
+    width: 100%;
+    min-height: 56px;
+    border-radius: 20px;
+    border: 1px solid #d5deeb;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .native-app .manual-date-field span {
+    color: #64748b;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  .native-app .manual-date-field input {
+    width: auto;
+    min-width: 135px;
+    border: 0;
+    padding: 0;
+    min-height: auto;
+    border-radius: 0;
+    background: transparent;
+    color: #0f172a;
+    font-size: 16px;
+    text-align: right;
+  }
+
+  .native-app .manual-date-field input:focus {
+    outline: none;
+  }
+}
+/* Modifica scadenza - stesso stile del form manuale */
+@media (max-width: 720px) {
+  .native-app .edit-deadline-panel {
+    padding: 22px;
+    border-radius: 30px;
+    gap: 18px;
+    margin-bottom: 120px;
+    overflow: hidden;
+  }
+
+  .native-app .edit-deadline-panel .section-heading.compact h2 {
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 8px;
+  }
+
+  .native-app .edit-deadline-panel .section-heading.compact p {
+    font-size: 17px;
+    line-height: 1.35;
+    margin: 0;
+    color: #64748b;
+  }
+
+  .native-app .edit-deadline-panel .manual-form {
+    display: grid;
+    gap: 12px;
+  }
+
+  .native-app .edit-deadline-panel .manual-row,
+  .native-app .edit-deadline-panel .notes-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .native-app .edit-deadline-panel input,
+  .native-app .edit-deadline-panel select,
+  .native-app .edit-deadline-panel textarea {
+    width: 100%;
+    max-width: 100%;
+    min-height: 56px;
+    border-radius: 20px;
+    border: 1px solid #d5deeb;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 17px;
+    line-height: 1.2;
+    padding: 14px 18px;
+    box-shadow: none;
+  }
+
+  .native-app .edit-deadline-panel select {
+    appearance: none;
+    -webkit-appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, #0f172a 50%) calc(100% - 22px) 50% / 7px 7px no-repeat,
+      linear-gradient(135deg, #0f172a 50%, transparent 50%) calc(100% - 16px) 50% / 7px 7px no-repeat,
+      #ffffff;
+    padding-right: 44px;
+  }
+
+  .native-app .edit-deadline-panel textarea {
+    min-height: 104px;
+    resize: none;
+    line-height: 1.35;
+  }
+
+  .native-app .edit-deadline-panel .manual-date-field {
+    width: 100%;
+    min-height: 56px;
+    border-radius: 20px;
+    border: 1px solid #d5deeb;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .native-app .edit-deadline-panel .manual-date-field span {
+    color: #64748b;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  .native-app .edit-deadline-panel .manual-date-field input {
+    width: auto;
+    min-width: 135px;
+    border: 0;
+    padding: 0;
+    min-height: auto;
+    border-radius: 0;
+    background: transparent;
+    color: #0f172a;
+    font-size: 16px;
+    text-align: right;
+  }
+
+  .native-app .edit-deadline-panel .save-manual-button {
+    width: 100%;
+    min-height: 60px;
+    border-radius: 24px;
+    font-size: 18px;
+    font-weight: 800;
+    margin-top: 4px;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+  }
+
+  .native-app .edit-deadline-panel .manual-close-button {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 20px;
+  }
+}
+@media (max-width: 720px) {
+  .native-app .enhanced-empty {
+    padding: 34px 22px;
+    border-radius: 26px;
+  }
+
+  .native-app .enhanced-empty h3 {
+    font-size: 22px;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+
+  .native-app .enhanced-empty p {
+    margin-bottom: 0;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+}

@@ -24,32 +24,7 @@ const API_BASE_URL = Capacitor.isNativePlatform()
   ? 'https://scadenzefacili.vercel.app'
   : '';
 
-const initialDeadlines = [
-  {
-    id: 1,
-    title: 'Bolletta luce',
-    provider: 'Enel Energia',
-    category: 'Casa',
-    dueDate: '2026-06-14',
-    amount: 87.4,
-  },
-  {
-    id: 2,
-    title: 'Assicurazione auto',
-    provider: 'UnipolSai',
-    category: 'Auto',
-    dueDate: '2026-06-28',
-    amount: 412,
-  },
-  {
-    id: 3,
-    title: "Carta d'identità",
-    provider: 'Comune',
-    category: 'Documenti',
-    dueDate: '2026-07-31',
-    amount: null,
-  },
-];
+const initialDeadlines = [];
 
 function formatDate(date) {
   if (!date) return 'Data non trovata';
@@ -973,42 +948,8 @@ if (existingDeadline) {
   <h3>Nessuna scadenza salvata</h3>
 
   <p>
-    Inizia caricando una bolletta, un’assicurazione o aggiungendo una
-    scadenza manuale.
+    Quando aggiungi una scadenza, la vedrai qui con data, importo e promemoria.
   </p>
-
-      <div className="empty-actions">
-        <button
-      className="primary"
-      onClick={() => {
-        setActiveTab('add');
-
-        setTimeout(() => {
-          if (!requireLoginBeforeAdd()) return;
-
-          fileInputRef.current?.click();
-        }, 100);
-      }}
-    >
-      <Upload size={18} />
-      Carica PDF o foto
-    </button>
-
-    <button
-  className="secondary"
-  onClick={() => {
-    setActiveTab('add');
-
-    setTimeout(() => {
-      document
-        .querySelector('.manual-panel')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }}
->
-  Aggiungi manualmente
-</button>
-  </div>
 </div>
             ) : (
               deadlines
@@ -1079,7 +1020,10 @@ if (existingDeadline) {
 
                       <button
                         className="icon-button"
-                        onClick={() => startEditingDeadline(item)}
+                        onClick={() => {
+                          setActiveTab('deadlines');
+                          startEditingDeadline(item);
+                        }}
                         aria-label="Modifica scadenza"
                       >
                         <Pencil size={16} />
@@ -1087,7 +1031,10 @@ if (existingDeadline) {
 
                       <button
                         className="icon-button"
-                        onClick={() => setDeadlineToDelete(item)}
+                        onClick={() => {
+                          setActiveTab('deadlines');
+                          setDeadlineToDelete(item);
+                        }}
                         aria-label="Elimina scadenza"
                       >
                         <Trash2 size={16} />
@@ -1098,6 +1045,139 @@ if (existingDeadline) {
             )}
           </div>
         </section>
+
+        {editingDeadline && (
+  <section className="panel manual-panel edit-deadline-panel" ref={editSectionRef}>
+    <div className="section-heading compact">
+      <h2>Modifica scadenza</h2>
+      <p>
+        Aggiorna i dettagli della scadenza salvata.
+      </p>
+    </div>
+
+    <div className="manual-form">
+      <div className="manual-row">
+        <input
+          placeholder="Titolo"
+          value={editingDeadline.title}
+          onChange={(e) =>
+            setEditingDeadline({
+              ...editingDeadline,
+              title: e.target.value,
+            })
+          }
+        />
+
+        <input
+          placeholder="Fornitore"
+          value={editingDeadline.provider}
+          onChange={(e) =>
+            setEditingDeadline({
+              ...editingDeadline,
+              provider: e.target.value,
+            })
+          }
+        />
+
+        <select
+          value={editingDeadline?.category || ''}
+          onChange={(e) =>
+            setEditingDeadline({
+              ...editingDeadline,
+              category: e.target.value,
+            })
+          }
+        >
+          <option value="">Categoria</option>
+          <option value="Casa">Casa</option>
+          <option value="Auto">Auto</option>
+          <option value="Documenti">Documenti</option>
+          <option value="Altro">Altro</option>
+        </select>
+
+        <label className="manual-date-field">
+          <span>Data di scadenza</span>
+
+          <input
+            type="date"
+            value={editingDeadline.dueDate}
+            onChange={(e) =>
+              setEditingDeadline({
+                ...editingDeadline,
+                dueDate: e.target.value,
+              })
+            }
+          />
+        </label>
+
+        <input
+          type="number"
+          placeholder="Importo"
+          value={editingDeadline.amount ?? ''}
+          onChange={(e) =>
+            setEditingDeadline({
+              ...editingDeadline,
+              amount: e.target.value,
+            })
+          }
+        />
+      </div>
+
+      <div className="manual-row notes-row">
+        <textarea
+          placeholder="Note"
+          value={editingDeadline?.notes || ''}
+          onChange={(e) =>
+            setEditingDeadline({
+              ...editingDeadline,
+              notes: e.target.value,
+            })
+          }
+        />
+
+        <button className="primary save-manual-button" onClick={updateDeadline}>
+          Salva modifiche
+        </button>
+      </div>
+
+      <button
+        className="ghost manual-close-button"
+        onClick={() => setEditingDeadline(null)}
+      >
+        Annulla modifica
+      </button>
+    </div>
+  </section>
+)}
+
+        {deadlineToDelete && (
+          <div className="modal-backdrop">
+            <div className="login-modal">
+              <h2>Eliminare la scadenza?</h2>
+
+              <p>Questa azione non può essere annullata.</p>
+
+              <div className="actions">
+                <button
+                  className="ghost"
+                  onClick={() => setDeadlineToDelete(null)}
+                >
+                  Annulla
+                </button>
+
+                <button
+                  className="primary"
+                  onClick={() => {
+                    deleteDeadline(deadlineToDelete.id);
+                    setDeadlineToDelete(null);
+                  }}
+                >
+                  Elimina
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
           </>
 )}
@@ -1671,20 +1751,15 @@ if (existingDeadline) {
             <option value="Altro">Altro</option>
           </select>
 
-          <input
-            type="text"
-            placeholder="Data di scadenza"
-            value={manualDate}
-            onFocus={(e) => {
-              e.target.type = 'date';
-            }}
-            onBlur={(e) => {
-              if (!e.target.value) {
-                e.target.type = 'text';
-              }
-            }}
-            onChange={(e) => setManualDate(e.target.value)}
-          />
+          <label className="manual-date-field">
+  <span>Data di scadenza</span>
+
+  <input
+    type="date"
+    value={manualDate}
+    onChange={(e) => setManualDate(e.target.value)}
+  />
+</label>
 
           <input
             type="number"
@@ -1721,130 +1796,7 @@ if (existingDeadline) {
     </>
   )}
 </section>
-
-        {editingDeadline && (
-          <section className="panel" ref={editSectionRef}>
-            <h2>Modifica scadenza</h2>
-
-            <div className="manual-grid">
-              <input
-                placeholder="Titolo"
-                value={editingDeadline.title}
-                onChange={(e) =>
-                  setEditingDeadline({
-                    ...editingDeadline,
-                    title: e.target.value,
-                  })
-                }
-              />
-
-              <input
-                placeholder="Fornitore"
-                value={editingDeadline.provider}
-                onChange={(e) =>
-                  setEditingDeadline({
-                    ...editingDeadline,
-                    provider: e.target.value,
-                  })
-                }
-              />
-
-              <select
-  value={editingDeadline?.category || 'Altro'}
-  onChange={(e) =>
-    setEditingDeadline({
-      ...editingDeadline,
-      category: e.target.value,
-    })
-  }
->
-  <option value="Casa">Casa</option>
-  <option value="Auto">Auto</option>
-  <option value="Documenti">Documenti</option>
-  <option value="Altro">Altro</option>
-</select>
-
-              <input
-                type="date"
-                value={editingDeadline.dueDate}
-                onChange={(e) =>
-                  setEditingDeadline({
-                    ...editingDeadline,
-                    dueDate: e.target.value,
-                  })
-                }
-              />
-
-              <input
-                type="number"
-                placeholder="Importo"
-                value={editingDeadline.amount ?? ''}
-                onChange={(e) =>
-                  setEditingDeadline({
-                    ...editingDeadline,
-                    amount: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <textarea
-  placeholder="Note"
-  value={editingDeadline?.notes || ''}
-  onChange={(e) =>
-    setEditingDeadline({
-      ...editingDeadline,
-      notes: e.target.value,
-    })
-  }
-/>
-
-            <div className="actions edit-actions">
-              <button className="primary" onClick={updateDeadline}>
-                Salva modifiche
-              </button>
-
-              <button
-                className="secondary"
-                onClick={() => setEditingDeadline(null)}
-              >
-                Annulla
-              </button>
-            </div>
-          </section>
-        )}
-
-        {deadlineToDelete && (
-          <div className="modal-backdrop">
-            <div className="login-modal">
-              <h2>Eliminare la scadenza?</h2>
-
-              <p>Questa azione non può essere annullata.</p>
-
-              <div className="actions">
-                <button
-                  className="ghost"
-                  onClick={() => setDeadlineToDelete(null)}
-                >
-                  Annulla
-                </button>
-
-                <button
-                  className="primary"
-                  onClick={() => {
-                    deleteDeadline(deadlineToDelete.id);
-                    setDeadlineToDelete(null);
-                  }}
-                >
-                  Elimina
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-
-        
+      
           </>
 )}
             </div>
