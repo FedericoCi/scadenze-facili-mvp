@@ -594,10 +594,11 @@ if (existingDeadline) {
     ]);
 
     showToast('Scadenza salvata.');
-    setIsSavingExtracted(false);
-    setShowExtraction(false);
-    setShowEmailPaste(false);
-    setEmailText('');
+setIsSavingExtracted(false);
+setShowExtraction(false);
+setShowEmailPaste(false);
+setEmailText('');
+setActiveTab('deadlines');
   }
 
   async function saveManual() {
@@ -701,6 +702,7 @@ if (existingDeadline) {
       setManualAmount('');
       setManualNotes('');
       setShowManualForm(false);
+      setActiveTab('deadlines');
   }
 
   async function deleteDeadline(id) {
@@ -763,6 +765,7 @@ if (existingDeadline) {
     );
 
     setEditingDeadline(null);
+    setActiveTab('deadlines');
     showToast('Scadenza modificata.');
   }
 
@@ -1150,51 +1153,63 @@ if (existingDeadline) {
   </section>
 )}
 
-        {deadlineToDelete && (
-          <div className="modal-backdrop">
-            <div className="login-modal">
-              <h2>Eliminare la scadenza?</h2>
+      {deadlineToDelete && (
+  <div className="modal-backdrop">
+    <div className="confirm-modal">
+      <div className="confirm-icon">
+        <Trash2 size={22} />
+      </div>
 
-              <p>Questa azione non può essere annullata.</p>
+      <h2>Eliminare questa scadenza?</h2>
 
-              <div className="actions">
-                <button
-                  className="ghost"
-                  onClick={() => setDeadlineToDelete(null)}
-                >
-                  Annulla
-                </button>
+      <p>
+        “{deadlineToDelete.title}” verrà rimossa definitivamente dalla tua lista.
+      </p>
 
-                <button
-                  className="primary"
-                  onClick={() => {
-                    deleteDeadline(deadlineToDelete.id);
-                    setDeadlineToDelete(null);
-                  }}
-                >
-                  Elimina
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+      <div className="confirm-actions">
+        <button
+          className="secondary"
+          onClick={() => setDeadlineToDelete(null)}
+        >
+          Annulla
+        </button>
+
+        <button
+          className="danger-button"
+          onClick={() => {
+            deleteDeadline(deadlineToDelete.id);
+            setDeadlineToDelete(null);
+          }}
+        >
+          Elimina
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
           </>
 )}
 
         {showLogin && !session && (
           <div className="modal-backdrop">
-            <div className="login-modal">
-              <h2>Accedi a ScadenzeFacili</h2>
+            <div className="login-modal app-login-modal">
+  <div className="login-icon">
+    <ShieldCheck size={22} />
+  </div>
 
-              <p>Ti invieremo un link sicuro per entrare senza password.</p>
+  <h2>Accedi per salvare le scadenze</h2>
+
+  <p>
+    Ti inviamo un link sicuro via email. Non serve password.
+  </p>
 
               <input
-                type="email"
-                placeholder="La tua email"
-                value={authEmail}
-                onChange={(e) => setAuthEmail(e.target.value)}
-              />
+  type="email"
+  placeholder="Email"
+  value={authEmail}
+  onChange={(e) => setAuthEmail(e.target.value)}
+/>
 
               <div className="actions">
                 <button
@@ -1215,6 +1230,14 @@ if (existingDeadline) {
 
         {showAddSection && (
         <>
+
+          <section className="app-section-title">
+  <h2>Aggiungi una scadenza</h2>
+  <p>
+    Carica un documento o incolla una mail: ti aiutiamo a trovare data, importo e fornitore.
+  </p>
+</section>
+
         <div className="trust-pill add-trust-pill">
   <ShieldCheck size={16} />
   File non salvato dopo l’estrazione
@@ -1261,8 +1284,8 @@ if (existingDeadline) {
 
   <p>
   {session
-    ? 'Carica una bolletta, assicurazione o documento. Controlli i dati e salvi il promemoria.'
-    : 'Carica un PDF, una foto o incolla il testo di una mail. Troviamo data, importo e fornitore, poi ti avvisiamo via email prima della scadenza.'}
+    ? 'Scegli un file o incolla una mail. Dopo l’analisi potrai controllare tutto prima di salvare.'
+    : 'Accedi per caricare documenti e creare promemoria automatici.'}
 </p>
 
             <div className="actions">
@@ -1292,8 +1315,8 @@ if (existingDeadline) {
             </div>
 
             <small>
-              Puoi cliccare sul bottone o trascinare un file in quest’area.
-            </small>
+  PDF, foto o testo mail. Nessuna scadenza viene salvata senza conferma.
+</small>
           </div>
 
           {!session && (

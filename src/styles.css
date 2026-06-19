@@ -1959,3 +1959,277 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     line-height: 1.45;
   }
 }
+/* Tab Novità - stile app mobile */
+@media (max-width: 720px) {
+  .native-app .privacy-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 22px;
+    border-radius: 30px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  }
+
+  .native-app .privacy-section .badge {
+    width: fit-content;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .native-app .privacy-section h2 {
+    margin: 14px 0 8px;
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .native-app .privacy-section p {
+    font-size: 16px;
+    line-height: 1.45;
+    color: #64748b;
+  }
+
+  .native-app .privacy-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .native-app .privacy-list div {
+    padding: 16px;
+    border-radius: 22px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+
+  .native-app .privacy-list strong {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .native-app .privacy-list span {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .native-app .roadmap {
+    padding: 22px;
+    border-radius: 30px;
+    margin-top: 0;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  }
+
+  .native-app .roadmap-header h2 {
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 8px;
+  }
+
+  .native-app .roadmap-header p {
+    font-size: 16px;
+    line-height: 1.45;
+    margin-bottom: 18px;
+  }
+
+  .native-app .roadmap-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .native-app .roadmap-item {
+    padding: 16px;
+    border-radius: 22px;
+    background: #f8fafc;
+  }
+
+  .native-app .roadmap-item.done {
+    background: #f0fdf4;
+  }
+
+  .native-app .roadmap-item strong {
+    font-size: 16px;
+  }
+
+  .native-app .roadmap-item p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .native-app .beta-section {
+    padding: 22px;
+    border-radius: 30px;
+    margin-bottom: 120px;
+    background: #0f172a;
+  }
+
+  .native-app .beta-section h2 {
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .native-app .beta-section p {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .native-app .beta-button {
+    min-height: 54px;
+    border-radius: 20px;
+    font-size: 16px;
+  }
+}
+/* Titolo sezione app */
+.app-section-title {
+  display: grid;
+  gap: 6px;
+}
+
+.app-section-title h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.app-section-title p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .native-app .app-section-title {
+    padding: 0 2px;
+    margin-bottom: -8px;
+  }
+
+  .native-app .app-section-title h2 {
+    font-size: 30px;
+  }
+
+  .native-app .app-section-title p {
+    font-size: 16px;
+  }
+}
+/* Popup conferma eliminazione */
+.confirm-modal {
+  width: min(420px, 100%);
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 26px;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+  text-align: center;
+}
+
+.confirm-icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 16px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #991b1b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-modal h2 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.confirm-modal p {
+  margin: 0 0 22px;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.danger-button {
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(220, 38, 38, 0.22);
+}
+
+@media (max-width: 720px) {
+  .native-app .confirm-modal {
+    border-radius: 32px;
+    padding: 26px 22px;
+  }
+
+  .native-app .confirm-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .native-app .confirm-actions button {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 20px;
+  }
+}
+/* Login modal più coerente con app iOS */
+.app-login-modal {
+  text-align: center;
+}
+
+.login-icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 16px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-login-modal h2 {
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin-bottom: 10px;
+}
+
+.app-login-modal p {
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.app-login-modal input {
+  min-height: 56px;
+  border-radius: 20px;
+  font-size: 17px;
+  text-align: center;
+}
+
+.app-login-modal .actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.app-login-modal .actions button {
+  width: 100%;
+  min-height: 54px;
+  border-radius: 20px;
+}
+
+@media (max-width: 720px) {
+  .native-app .app-login-modal {
+    border-radius: 32px;
+    padding: 28px 22px;
+  }
+}
