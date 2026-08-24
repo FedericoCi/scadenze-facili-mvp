@@ -2233,3 +2233,158 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     padding: 28px 22px;
   }
 }
+/* Estrazione documento - stile app mobile */
+@media (max-width: 720px) {
+  .native-app .extraction {
+    padding: 22px;
+    border-radius: 30px;
+    gap: 18px;
+    margin-bottom: 120px;
+    overflow: hidden;
+  }
+
+  .native-app .extraction h2 {
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 8px;
+  }
+
+  .native-app .extraction > p {
+    font-size: 16px;
+    line-height: 1.45;
+    color: #64748b;
+    margin-bottom: 18px;
+  }
+
+  .native-app .editable-extraction {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 0 0 16px;
+  }
+
+  .native-app .editable-extraction label {
+    display: grid;
+    gap: 8px;
+  }
+
+  .native-app .editable-extraction label span {
+    font-size: 13px;
+    font-weight: 800;
+    color: #64748b;
+  }
+
+  .native-app .editable-extraction input,
+  .native-app .editable-extraction select,
+  .native-app .editable-extraction textarea {
+    width: 100%;
+    max-width: 100%;
+    min-height: 56px;
+    border-radius: 20px;
+    border: 1px solid #d5deeb;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 17px;
+    line-height: 1.2;
+    padding: 14px 18px;
+    box-shadow: none;
+  }
+
+  .native-app .editable-extraction select {
+    appearance: none;
+    -webkit-appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, #0f172a 50%) calc(100% - 22px) 50% / 7px 7px no-repeat,
+      linear-gradient(135deg, #0f172a 50%, transparent 50%) calc(100% - 16px) 50% / 7px 7px no-repeat,
+      #ffffff;
+    padding-right: 44px;
+  }
+
+  .native-app .editable-extraction textarea {
+    min-height: 104px;
+    resize: none;
+    line-height: 1.35;
+  }
+
+  .native-app .extraction .smart-note {
+    border-radius: 20px;
+    padding: 16px;
+    font-size: 15px;
+    line-height: 1.45;
+    margin-bottom: 16px;
+  }
+
+  .native-app .extraction .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .native-app .extraction .actions button {
+    width: 100%;
+    min-height: 56px;
+    border-radius: 22px;
+    font-size: 17px;
+  }
+}
+/* Analisi documento - stile app mobile */
+@media (max-width: 720px) {
+  .native-app .analyzing-panel {
+    padding: 34px 22px;
+    border-radius: 30px;
+    margin-bottom: 120px;
+    text-align: center;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  }
+
+  .native-app .analyzing-spinner {
+    width: 58px;
+    height: 58px;
+    border-width: 5px;
+    margin-bottom: 24px;
+  }
+
+  .native-app .analyzing-panel h2 {
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 10px;
+  }
+
+  .native-app .file-preview {
+    font-size: 15px;
+    line-height: 1.4;
+    margin: 0 0 22px;
+    color: #64748b;
+  }
+
+  .native-app .file-preview strong {
+    display: block;
+    margin-top: 4px;
+    color: #0f172a;
+    word-break: break-word;
+  }
+
+  .native-app .analyzing-steps {
+    display: grid;
+    gap: 10px;
+    margin-top: 0;
+    text-align: left;
+  }
+
+  .native-app .analyzing-steps div {
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .native-app .analyzing-steps .pending-step {
+    color: #94a3b8;
+    font-style: normal;
+  }
+}
