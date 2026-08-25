@@ -189,6 +189,7 @@ function HomePage() {
   const [analysisSteps, setAnalysisSteps] = useState([]);
   const fileInputRef = useRef(null);
   const editSectionRef = useRef(null);
+  const emailPasteRef = useRef(null);
 
   const [extracted, setExtracted] = useState({
   title: '',
@@ -392,16 +393,20 @@ const showNewsSection = useTabbedLayout
   return data.length > 0;
 }
 
-  async function analyzeEmailText() {
-    if (!emailText.trim()) {
-      showToast('Incolla prima il testo della mail.', 'error');
-      return;
-    }
+async function analyzeEmailText() {
+  if (!emailText.trim()) {
+    showToast('Incolla prima il testo della mail.', 'error');
+    return;
+  }
 
-    setIsAnalyzing(true);
-    setShowExtraction(false);
-    setAnalysisSteps(['Lettura testo avviata']);
+  setIsAnalyzing(true);
+  setShowExtraction(false);
+  setAnalysisSteps(['Lettura testo avviata']);
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
+
+  try {
     setTimeout(() => {
       setAnalysisSteps((steps) => [...steps, 'Analisi del testo']);
     }, 800);
@@ -418,6 +423,7 @@ const showNewsSection = useTabbedLayout
       headers: {
         'Content-Type': 'application/json',
       },
+      signal: controller.signal,
       body: JSON.stringify({
         text: emailText,
       }),
@@ -430,33 +436,45 @@ const showNewsSection = useTabbedLayout
     } catch (error) {
       console.error('Risposta non JSON:', error);
       showToast('Errore tecnico durante la lettura del testo.', 'error');
-      setIsAnalyzing(false);
       return;
     }
 
     setAnalysisSteps((steps) => [...steps, 'Risposta ricevuta']);
 
     if (!response.ok) {
-      console.error(data);
-      showToast('Errore durante l’analisi.', 'error');
-      setIsAnalyzing(false);
+      console.error('Errore API extract-deadline:', data);
+      showToast(
+        data?.error || 'Errore durante l’analisi del testo.',
+        'error'
+      );
       return;
     }
 
     setExtracted({
-      title: data.result.title || 'Scadenza',
-      provider: data.result.provider || 'Fornitore non trovato',
-      category: data.result.category || 'Altro',
-      dueDate: data.result.dueDate,
-      amount: data.result.amount ?? null,
+      title: data.result?.title || 'Scadenza',
+      provider: data.result?.provider || 'Fornitore non trovato',
+      category: data.result?.category || 'Altro',
+      dueDate: data.result?.dueDate || '',
+      amount: data.result?.amount ?? null,
       notes: '',
       insight: 'Dati estratti automaticamente dal testo incollato.',
     });
 
-    setIsAnalyzing(false);
     setAnalysisSteps((steps) => [...steps, 'Dati pronti da controllare']);
     setShowExtraction(true);
+  } catch (error) {
+    console.error('Errore analisi testo:', error);
+
+    if (error.name === 'AbortError') {
+      showToast('Analisi troppo lenta. Riprova tra poco.', 'error');
+    } else {
+      showToast('Errore durante l’analisi. Controlla la connessione.', 'error');
+    }
+  } finally {
+    clearTimeout(timeoutId);
+    setIsAnalyzing(false);
   }
+}
 
   async function analyzePdfFile(file) {
     if (!file) return;
@@ -1306,7 +1324,14 @@ if (existingDeadline) {
   onClick={() => {
     if (!requireLoginBeforeAdd()) return;
 
-    setShowEmailPaste(!showEmailPaste);
+    setShowEmailPaste(true);
+
+    setTimeout(() => {
+      emailPasteRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 100);
   }}
 >
   <Mail size={20} />
@@ -1331,7 +1356,7 @@ if (existingDeadline) {
         </section>
 
         {showEmailPaste && (
-          <section className="panel">
+          <section className="panel email-paste-panel" ref={emailPasteRef}>
             <h2>Incolla testo da una mail</h2>
 
             <p>

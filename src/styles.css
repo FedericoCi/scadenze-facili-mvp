@@ -2388,3 +2388,11 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     font-style: normal;
   }
 }
+
+/* Sezione incolla mail - spazio corretto sopra tab bar */
+@media (max-width: 720px) {
+  .native-app .email-paste-panel {
+    scroll-margin-top: 18px;
+    margin-bottom: 120px;
+  }
+}
