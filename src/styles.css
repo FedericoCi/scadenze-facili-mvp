@@ -2396,3 +2396,55 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     margin-bottom: 120px;
   }
 }
+
+.date-with-today {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-with-today .manual-date-field {
+  flex: 1;
+}
+
+.today-button {
+  border: 1px solid #d5deeb;
+  background: #ffffff;
+  color: #2563eb;
+  border-radius: 999px;
+  padding: 0 16px;
+  min-height: 44px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.today-button:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.extracted-date-field input {
+  flex: 1;
+}
+
+@media (max-width: 720px) {
+  .native-app .date-with-today {
+    width: 100%;
+  }
+
+  .native-app .today-button {
+    min-height: 56px;
+    padding: 0 18px;
+    font-size: 15px;
+  }
+
+  .native-app .extracted-date-field {
+    display: flex;
+    gap: 10px;
+  }
+
+  .native-app .extracted-date-field input {
+    min-height: 56px;
+  }
+}

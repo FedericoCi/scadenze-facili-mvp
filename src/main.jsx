@@ -362,6 +362,14 @@ const showNewsSection = useTabbedLayout
     }, 3000);
   }
 
+function getTodayDateValue() {
+  const today = new Date();
+  const offset = today.getTimezoneOffset();
+  const localToday = new Date(today.getTime() - offset * 60 * 1000);
+
+  return localToday.toISOString().split('T')[0];
+}
+
   function requireLoginBeforeAdd() {
   if (session) {
     return true;
@@ -1175,19 +1183,19 @@ if (existingDeadline) {
         </select>
 
         <label className="manual-date-field">
-          <span>Data di scadenza</span>
+  <span>Data di scadenza</span>
 
-          <input
-            type="date"
-            value={editingDeadline.dueDate}
-            onChange={(e) =>
-              setEditingDeadline({
-                ...editingDeadline,
-                dueDate: e.target.value,
-              })
-            }
-          />
-        </label>
+  <input
+    type="date"
+    value={editingDeadline.dueDate}
+    onChange={(e) =>
+      setEditingDeadline({
+        ...editingDeadline,
+        dueDate: e.target.value,
+      })
+    }
+  />
+</label>
 
         <input
           type="number"
@@ -1492,41 +1500,39 @@ if (existingDeadline) {
   </label>
 
   <label>
-    <span>Categoria</span>
-    <select
-  value={manualCategory}
-  onChange={(e) => setManualCategory(e.target.value)}
->
-  <option value="">Categoria</option>
-  <option value="Casa">Casa</option>
-  <option value="Auto">Auto</option>
-  <option value="Documenti">Documenti</option>
-  <option value="Altro">Altro</option>
-</select>
-  </label>
+  <span>Categoria</span>
 
-  <label>
-    <span>Scadenza</span>
-    <input
-  type="text"
-  placeholder="Data di scadenza"
-  value={extracted.dueDate}
-  onFocus={(e) => {
-    e.target.type = 'date';
-  }}
-  onBlur={(e) => {
-    if (!e.target.value) {
-      e.target.type = 'text';
+  <select
+    value={extracted.category}
+    onChange={(e) =>
+      setExtracted({
+        ...extracted,
+        category: e.target.value,
+      })
     }
-  }}
-  onChange={(e) =>
-    setExtracted({
-      ...extracted,
-      dueDate: e.target.value,
-    })
-  }
-/>
-  </label>
+  >
+    <option value="">Categoria</option>
+    <option value="Casa">Casa</option>
+    <option value="Auto">Auto</option>
+    <option value="Documenti">Documenti</option>
+    <option value="Altro">Altro</option>
+  </select>
+</label>
+
+<label>
+  <span>Scadenza</span>
+
+  <input
+    type="date"
+    value={extracted.dueDate}
+    onChange={(e) =>
+      setExtracted({
+        ...extracted,
+        dueDate: e.target.value,
+      })
+    }
+  />
+</label>
 
   <label>
     <span>Importo</span>
@@ -1847,13 +1853,8 @@ if (existingDeadline) {
           />
 
           <select
-  value={extracted.category}
-  onChange={(e) =>
-    setExtracted({
-      ...extracted,
-      category: e.target.value,
-    })
-  }
+  value={manualCategory}
+  onChange={(e) => setManualCategory(e.target.value)}
 >
   <option value="">Categoria</option>
   <option value="Casa">Casa</option>
@@ -1862,7 +1863,7 @@ if (existingDeadline) {
   <option value="Altro">Altro</option>
 </select>
 
-          <label className="manual-date-field">
+<label className="manual-date-field">
   <span>Data di scadenza</span>
 
   <input
