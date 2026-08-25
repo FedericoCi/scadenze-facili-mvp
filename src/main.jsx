@@ -477,24 +477,59 @@ async function analyzeEmailText() {
 }
 
   async function analyzePdfFile(file) {
-    if (!file) return;
+  if (!file) return;
 
-    setUploadedFileName(file.name);
-    setIsAnalyzing(true);
-    setShowExtraction(false);
-    setAnalysisSteps(['Caricamento PDF avviato']);
+  console.log('PDF selezionato:', file.name, file.type, file.size);
+
+  setUploadedFileName(file.name);
+  setIsAnalyzing(true);
+  setShowExtraction(false);
+  setAnalysisSteps(['Caricamento PDF avviato']);
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
+
+  function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 32768;
+    let binary = '';
+
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode(...chunk);
+    }
+
+    return btoa(binary);
+  }
+
+  try {
+    setTimeout(() => {
+      setAnalysisSteps((steps) => [...steps, 'Preparazione PDF']);
+    }, 500);
+
+    const fileBuffer = await file.arrayBuffer();
+    const fileBase64 = arrayBufferToBase64(fileBuffer);
+
+    console.log('PDF convertito in base64:', fileBase64.length);
 
     setTimeout(() => {
-      setAnalysisSteps((steps) => [...steps, 'Lettura testo dal PDF']);
-    }, 800);
+      setAnalysisSteps((steps) => [...steps, 'Invio PDF al server']);
+    }, 900);
 
     const response = await fetch(`${API_BASE_URL}/api/parse-pdf`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/pdf',
+        'Content-Type': 'application/json',
       },
-      body: file,
+      signal: controller.signal,
+      body: JSON.stringify({
+        fileName: file.name,
+        mimeType: file.type || 'application/pdf',
+        fileBase64,
+      }),
     });
+
+    console.log('Risposta parse-pdf status:', response.status);
 
     const raw = await response.text();
 
@@ -502,35 +537,58 @@ async function analyzeEmailText() {
 
     try {
       data = JSON.parse(raw);
-      console.log('PDF DEBUG:', data.result?.debugText);
     } catch (error) {
-      console.error('Risposta non JSON:', raw);
+      console.error('Risposta non JSON PDF:', raw);
       showToast('Errore tecnico durante la lettura del PDF.', 'error');
-      setIsAnalyzing(false);
       return;
     }
 
+    console.log('PDF DEBUG:', data.result?.debugText);
+
     if (!response.ok) {
-      console.error(data);
-      showToast('Errore durante la lettura del PDF.', 'error');
-      setIsAnalyzing(false);
+      console.error('Errore API parse-pdf:', data);
+      showToast(
+        data?.error || 'Errore durante la lettura del PDF.',
+        'error'
+      );
       return;
     }
 
     setExtracted({
-      title: data.result.title || 'Scadenza',
-      provider: data.result.provider || 'Fornitore non trovato',
-      category: data.result.category || 'Altro',
-      dueDate: data.result.dueDate,
-      amount: data.result.amount ?? null,
+      title: data.result?.title || 'Scadenza',
+      provider: data.result?.provider || 'Fornitore non trovato',
+      category: data.result?.category || 'Altro',
+      dueDate: data.result?.dueDate || '',
+      amount: data.result?.amount ?? null,
       notes: '',
       insight: 'Dati estratti automaticamente dal PDF.',
     });
 
     setAnalysisSteps((steps) => [...steps, 'Dati estratti dal PDF']);
-    setIsAnalyzing(false);
     setShowExtraction(true);
+  } catch (error) {
+    console.error('Errore analisi PDF:', {
+      name: error?.name,
+      message: error?.message,
+      stack: error?.stack,
+    });
+
+    if (error.name === 'AbortError') {
+      showToast(
+        'Lettura PDF troppo lenta. Riprova con un file più leggero.',
+        'error'
+      );
+    } else {
+      showToast(
+        'Errore durante la lettura del PDF. Controlla il file o la connessione.',
+        'error'
+      );
+    }
+  } finally {
+    clearTimeout(timeoutId);
+    setIsAnalyzing(false);
   }
+}
 
   async function saveExtracted() {
     if (!session) {
@@ -1789,15 +1847,20 @@ if (existingDeadline) {
           />
 
           <select
-            value={manualCategory}
-            onChange={(e) => setManualCategory(e.target.value)}
-          >
-            <option value="">Categoria</option>
-            <option value="Casa">Casa</option>
-            <option value="Auto">Auto</option>
-            <option value="Documenti">Documenti</option>
-            <option value="Altro">Altro</option>
-          </select>
+  value={extracted.category}
+  onChange={(e) =>
+    setExtracted({
+      ...extracted,
+      category: e.target.value,
+    })
+  }
+>
+  <option value="">Categoria</option>
+  <option value="Casa">Casa</option>
+  <option value="Auto">Auto</option>
+  <option value="Documenti">Documenti</option>
+  <option value="Altro">Altro</option>
+</select>
 
           <label className="manual-date-field">
   <span>Data di scadenza</span>
