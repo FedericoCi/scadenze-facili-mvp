@@ -1,16 +1,53 @@
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 function normalizeAmount(value) {
   if (!value) return null;
+
   return Number(value.replace('.', '').replace(',', '.'));
 }
 
 function toIsoDate(date) {
   if (!date) return '';
 
-  const match = date.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if (!match) return '';
+  const numericMatch = date.match(/(\d{2})\/(\d{2})\/(\d{4})/);
 
-  const [, day, month, year] = match;
-  return `${year}-${month}-${day}`;
+  if (numericMatch) {
+    const [, day, month, year] = numericMatch;
+    return `${year}-${month}-${day}`;
+  }
+
+  const monthMap = {
+    gennaio: '01',
+    febbraio: '02',
+    marzo: '03',
+    aprile: '04',
+    maggio: '05',
+    giugno: '06',
+    luglio: '07',
+    agosto: '08',
+    settembre: '09',
+    ottobre: '10',
+    novembre: '11',
+    dicembre: '12',
+  };
+
+  const textMatch = date
+    .toLowerCase()
+    .match(/(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+(\d{4})/);
+
+  if (textMatch) {
+    const [, day, monthName, year] = textMatch;
+    const paddedDay = day.padStart(2, '0');
+    const month = monthMap[monthName];
+
+    return `${year}-${month}-${paddedDay}`;
+  }
+
+  return '';
 }
 
 function detectProvider(text) {
@@ -73,6 +110,14 @@ function detectTitle(text, provider, category) {
 }
 
 export default async function handler(req, res) {
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -86,11 +131,15 @@ export default async function handler(req, res) {
 
     const dueDateMatch =
       text.match(/data\s+di\s+scadenza\s+(\d{2}\/\d{2}\/\d{4})/i) ||
-      text.match(/scadenza\s+(\d{2}\/\d{2}\/\d{4})/i);
+      text.match(/scadenza\s+(\d{2}\/\d{2}\/\d{4})/i) ||
+      text.match(/entro\s+il\s+(\d{1,2}\s+[a-zàèéìòù]+\s+\d{4})/i) ||
+      text.match(/entro\s+(\d{1,2}\s+[a-zàèéìòù]+\s+\d{4})/i);
 
     const amountMatch =
       text.match(/importo\s+da\s+pagare\s+euro\s+([\d.,]+)/i) ||
       text.match(/totale\s+da\s+pagare\s+euro\s+([\d.,]+)/i) ||
+      text.match(/pari\s+a\s+([\d.,]+)\s*€/i) ||
+      text.match(/([\d.,]+)\s*€/i) ||
       text.match(/importo\s+([\d.,]+)/i);
 
     const provider = detectProvider(text);
