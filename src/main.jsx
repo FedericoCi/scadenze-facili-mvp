@@ -362,12 +362,146 @@ const showNewsSection = useTabbedLayout
   ? activeTab === 'news'
   : true;
 
+const [isTabbarCompact, setIsTabbarCompact] = useState(false);
+
+const lastScrollYRef = useRef(0);
+
 const mobileTabs = ['deadlines', 'add', 'guides', 'news'];
 
 const activeTabIndex = Math.max(
   mobileTabs.indexOf(activeTab),
   0
 );
+
+useEffect(() => {
+  if (!isNativeApp) return;
+
+  let ticking = false;
+
+  function updateCompactTabbar() {
+    ticking = false;
+
+    const scrollTop =
+      window.scrollY ||
+      document.documentElement.scrollTop ||
+      0;
+
+    const lastScrollTop = lastScrollYRef.current;
+    const isScrollingDown = scrollTop > lastScrollTop;
+    const isScrollingUp = scrollTop < lastScrollTop;
+
+    lastScrollYRef.current = scrollTop;
+
+    setIsTabbarCompact((currentValue) => {
+      if (scrollTop < 24) return false;
+
+      if (isScrollingUp) return false;
+
+      if (isScrollingDown && scrollTop > 80) return true;
+
+      return currentValue;
+    });
+  }
+
+  function handleScroll() {
+    if (ticking) return;
+
+    ticking = true;
+    window.requestAnimationFrame(updateCompactTabbar);
+  }
+
+  lastScrollYRef.current =
+    window.scrollY ||
+    document.documentElement.scrollTop ||
+    0;
+
+  updateCompactTabbar();
+
+  window.addEventListener('scroll', handleScroll, {
+    passive: true,
+  });
+
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+  };
+}, [isNativeApp]);
+
+function getTabFromClientX(clientX) {
+  const tabbar = tabbarRef.current;
+
+  if (!tabbar) return null;
+
+  const rect = tabbar.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const tabWidth = rect.width / mobileTabs.length;
+
+  const index = Math.min(
+    mobileTabs.length - 1,
+    Math.max(0, Math.floor(x / tabWidth))
+  );
+
+  return mobileTabs[index];
+}
+
+function updateActiveTabFromClientX(clientX) {
+  const nextTab = getTabFromClientX(clientX);
+
+  if (nextTab) {
+    setActiveTab(nextTab);
+  }
+}
+
+function handleTabbarTouchStart(event) {
+  isTabbarDraggingRef.current = true;
+
+  const touch = event.touches?.[0];
+
+  if (touch) {
+    updateActiveTabFromClientX(touch.clientX);
+  }
+}
+
+function handleTabbarTouchMove(event) {
+  if (!isTabbarDraggingRef.current) return;
+
+  const touch = event.touches?.[0];
+
+  if (!touch) return;
+
+  event.preventDefault();
+  updateActiveTabFromClientX(touch.clientX);
+}
+
+function handleTabbarTouchEnd() {
+  isTabbarDraggingRef.current = false;
+}
+
+function handleTabbarMouseDown(event) {
+  isTabbarDraggingRef.current = true;
+  updateActiveTabFromClientX(event.clientX);
+}
+
+function handleTabbarMouseMove(event) {
+  if (!isTabbarDraggingRef.current) return;
+
+  updateActiveTabFromClientX(event.clientX);
+}
+
+function handleTabbarMouseUp() {
+  isTabbarDraggingRef.current = false;
+}
+
+function handleTabbarPointerEnd(event) {
+  isTabbarDraggingRef.current = false;
+
+  if (event.currentTarget.releasePointerCapture) {
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      // Pointer già rilasciato.
+    }
+  }
+}
 
 function getTabFromClientX(clientX) {
   const tabbar = tabbarRef.current;
@@ -2165,7 +2299,7 @@ if (existingDeadline) {
       {isNativeApp && (
   <nav
   ref={tabbarRef}
-  className="mobile-tabbar"
+  className={`mobile-tabbar ${isTabbarCompact ? 'is-compact' : ''}`}
   aria-label="Navigazione app"
   style={{ '--active-tab-index': activeTabIndex }}
   onTouchStart={handleTabbarTouchStart}

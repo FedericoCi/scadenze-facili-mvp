@@ -2513,3 +2513,305 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     margin-bottom: 110px;
   }
 }
+
+/* Tab bar app iOS - versione pulita finale */
+@media (max-width: 720px) {
+  .native-app {
+    padding-bottom: 118px;
+  }
+
+  .native-app .mobile-tabbar {
+    position: fixed;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+    transform: translateX(-50%);
+    z-index: 1000;
+
+    width: calc(100vw - 32px);
+    max-width: 402px;
+    height: 74px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: center;
+
+    padding: 7px;
+    border-radius: 999px;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.97),
+        rgba(255, 255, 255, 0.86)
+      );
+
+    border: 1px solid rgba(226, 232, 240, 0.92);
+
+    box-shadow:
+      0 16px 38px rgba(15, 23, 42, 0.14),
+      0 4px 12px rgba(15, 23, 42, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+
+    overflow: hidden;
+
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .native-app .mobile-tabbar__liquid,
+  .native-app .mobile-tabbar__liquid::before,
+  .native-app .mobile-tabbar__liquid::after {
+    display: none !important;
+  }
+
+  .native-app .mobile-tabbar__item {
+    position: relative;
+    z-index: 2;
+
+    width: calc(100% - 6px);
+    height: 58px;
+    min-height: 58px;
+
+    justify-self: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+
+    padding: 7px 3px;
+    box-shadow: none;
+
+    cursor: pointer;
+
+    transform: none !important;
+    animation: none !important;
+
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .native-app .mobile-tabbar__item svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.25;
+
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .native-app .mobile-tabbar__item span {
+    position: relative;
+    z-index: 3;
+
+    white-space: nowrap;
+
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .native-app .mobile-tabbar__item.is-active {
+    overflow: hidden;
+    isolation: isolate;
+
+    background:
+      linear-gradient(
+        180deg,
+        #1a263b 0%,
+        #111827 58%,
+        #0b1120 100%
+      );
+
+    color: #ffffff;
+
+    box-shadow:
+  0 8px 18px rgba(15, 23, 42, 0.22),
+  inset 0 1px 1px rgba(255, 255, 255, 0.20),
+  inset 0 -8px 16px rgba(0, 0, 0, 0.18) !important;
+
+    transform: none !important;
+  }
+
+  .native-app .mobile-tabbar__item.is-active::before {.native-app .mobile-tabbar__item.is-active::before {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: 6px;
+  height: 38%;
+  border-radius: 999px;
+
+  background:
+    radial-gradient(
+      95% 115% at 50% -12%,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(255, 255, 255, 0.16) 36%,
+      rgba(255, 255, 255, 0.06) 58%,
+      rgba(255, 255, 255, 0.00) 78%
+    );
+
+  filter: blur(1.6px);
+  opacity: 0.82;
+  pointer-events: none;
+}}
+
+  .native-app .mobile-tabbar__item.is-active::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 4px;
+    height: 42%;
+
+    border-radius: 999px 999px 70% 70% / 999px 999px 55% 55%;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.08),
+        rgba(255, 255, 255, 0.00)
+      );
+
+    opacity: 0.62;
+    pointer-events: none;
+  }
+
+  .native-app .mobile-tabbar__item.is-active svg,
+  .native-app .mobile-tabbar__item.is-active span {
+    position: relative;
+    z-index: 3;
+    transform: none !important;
+  }
+
+  .native-app .mobile-tabbar__item:hover,
+  .native-app .mobile-tabbar__item:active,
+  .native-app .mobile-tabbar__item.is-active:hover,
+  .native-app .mobile-tabbar__item.is-active:active {
+    transform: none !important;
+  }
+}
+/* Tab bar compatta durante scroll */
+@media (max-width: 720px) {
+  .native-app .mobile-tabbar {
+    transition:
+      width 220ms ease,
+      height 220ms ease,
+      padding 220ms ease,
+      bottom 220ms ease,
+      box-shadow 220ms ease,
+      background 220ms ease !important;
+  }
+
+  .native-app .mobile-tabbar__item {
+    transition:
+      color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      height 220ms ease,
+      min-height 220ms ease,
+      gap 220ms ease,
+      padding 220ms ease !important;
+  }
+
+  .native-app .mobile-tabbar__item svg {
+    transition:
+      width 220ms ease,
+      height 220ms ease,
+      stroke 160ms ease,
+      opacity 160ms ease !important;
+  }
+
+  .native-app .mobile-tabbar__item span {
+    transition:
+      opacity 160ms ease,
+      max-height 220ms ease,
+      transform 220ms ease !important;
+  }
+
+  .native-app .mobile-tabbar.is-compact {
+    width: calc(100vw - 120px) !important;
+    max-width: 280px !important;
+    height: 58px !important;
+    padding: 6px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.94),
+        rgba(255, 255, 255, 0.82)
+      ) !important;
+
+    box-shadow:
+      0 12px 28px rgba(15, 23, 42, 0.13),
+      0 4px 10px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  }
+
+  .native-app .mobile-tabbar.is-compact .mobile-tabbar__item {
+    height: 46px !important;
+    min-height: 46px !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+
+  .native-app .mobile-tabbar.is-compact .mobile-tabbar__item svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .native-app .mobile-tabbar.is-compact .mobile-tabbar__item span {
+    opacity: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    transform: translateY(4px) !important;
+  }
+
+  .native-app .mobile-tabbar.is-compact .mobile-tabbar__item.is-active::before {
+    left: 18% !important;
+    right: 18% !important;
+    top: 5px !important;
+    height: 32% !important;
+    opacity: 0.72 !important;
+  }
+
+  .native-app .mobile-tabbar.is-compact .mobile-tabbar__item.is-active {
+    box-shadow:
+      0 8px 18px rgba(15, 23, 42, 0.22),
+      inset 0 1px 1px rgba(255, 255, 255, 0.18),
+      inset 0 -8px 14px rgba(0, 0, 0, 0.18) !important;
+  }
+}
+/* Swipe tab bar più affidabile su iPhone */
+@media (max-width: 720px) {
+  .native-app .mobile-tabbar {
+    touch-action: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+
+  .native-app .mobile-tabbar__item,
+  .native-app .mobile-tabbar__item svg,
+  .native-app .mobile-tabbar__item span {
+    pointer-events: none;
+  }
+}
