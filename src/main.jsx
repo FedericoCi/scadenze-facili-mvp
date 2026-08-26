@@ -6,7 +6,13 @@ import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { App as CapacitorApp } from '@capacitor/app';
 import {
+  Camera as CapacitorCamera,
+  CameraResultType,
+  CameraSource,
+} from '@capacitor/camera';
+import {
   Upload,
+  Camera as CameraIcon,
   Mail,
   ShieldCheck,
   Sparkles,
@@ -190,6 +196,8 @@ function HomePage() {
   const fileInputRef = useRef(null);
   const editSectionRef = useRef(null);
   const emailPasteRef = useRef(null);
+  const tabbarRef = useRef(null);
+  const isTabbarDraggingRef = useRef(false);
 
   const [extracted, setExtracted] = useState({
   title: '',
@@ -354,6 +362,79 @@ const showNewsSection = useTabbedLayout
   ? activeTab === 'news'
   : true;
 
+const mobileTabs = ['deadlines', 'add', 'guides', 'news'];
+
+const activeTabIndex = Math.max(
+  mobileTabs.indexOf(activeTab),
+  0
+);
+
+function getTabFromClientX(clientX) {
+  const tabbar = tabbarRef.current;
+
+  if (!tabbar) return null;
+
+  const rect = tabbar.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const tabWidth = rect.width / mobileTabs.length;
+
+  const index = Math.min(
+    mobileTabs.length - 1,
+    Math.max(0, Math.floor(x / tabWidth))
+  );
+
+  return mobileTabs[index];
+}
+
+function updateActiveTabFromClientX(clientX) {
+  const nextTab = getTabFromClientX(clientX);
+
+  if (nextTab) {
+    setActiveTab(nextTab);
+  }
+}
+
+function handleTabbarTouchStart(event) {
+  isTabbarDraggingRef.current = true;
+
+  const touch = event.touches?.[0];
+
+  if (touch) {
+    updateActiveTabFromClientX(touch.clientX);
+  }
+}
+
+function handleTabbarTouchMove(event) {
+  if (!isTabbarDraggingRef.current) return;
+
+  const touch = event.touches?.[0];
+
+  if (touch) {
+    event.preventDefault();
+    updateActiveTabFromClientX(touch.clientX);
+  }
+}
+
+function handleTabbarTouchEnd() {
+  isTabbarDraggingRef.current = false;
+}
+
+function handleTabbarMouseDown(event) {
+  isTabbarDraggingRef.current = true;
+  updateActiveTabFromClientX(event.clientX);
+}
+
+function handleTabbarMouseMove(event) {
+  if (!isTabbarDraggingRef.current) return;
+
+  updateActiveTabFromClientX(event.clientX);
+}
+
+function handleTabbarMouseUp() {
+  isTabbarDraggingRef.current = false;
+
+}
+
   function showToast(message, type = 'success') {
     setToast({ message, type });
 
@@ -368,6 +449,23 @@ function getTodayDateValue() {
   const localToday = new Date(today.getTime() - offset * 60 * 1000);
 
   return localToday.toISOString().split('T')[0];
+}
+
+  function dataUrlToFile(dataUrl, fileName) {
+  const [header, base64Data] = dataUrl.split(',');
+  const mimeMatch = header.match(/:(.*?);/);
+  const mimeType = mimeMatch?.[1] || 'image/jpeg';
+
+  const binary = atob(base64Data);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return new File([bytes], fileName, {
+    type: mimeType,
+  });
 }
 
   function requireLoginBeforeAdd() {
@@ -484,18 +582,44 @@ async function analyzeEmailText() {
   }
 }
 
+async function takePhotoAndAnalyze() {
+  if (!requireLoginBeforeAdd()) return;
+
+  try {
+    const photo = await CapacitorCamera.getPhoto({
+      quality: 70,
+      width: 1400,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Camera,
+      promptLabelHeader: 'Scatta una foto',
+      promptLabelPhoto: 'Scatta foto',
+      promptLabelPicture: 'Usa foto',
+    });
+
+    if (!photo.dataUrl) {
+      showToast('Foto non disponibile.', 'error');
+      return;
+    }
+
+    const file = dataUrlToFile(
+      photo.dataUrl,
+      `foto-scadenza-${Date.now()}.jpg`
+    );
+
+    await analyzePdfFile(file);
+  } catch (error) {
+    console.error('Errore fotocamera:', error);
+
+    if (error?.message?.toLowerCase().includes('cancel')) {
+      return;
+    }
+
+    showToast('Errore durante lo scatto della foto.', 'error');
+  }
+}
+
   async function analyzePdfFile(file) {
   if (!file) return;
-
-  console.log('PDF selezionato:', file.name, file.type, file.size);
-
-  setUploadedFileName(file.name);
-  setIsAnalyzing(true);
-  setShowExtraction(false);
-  setAnalysisSteps(['Caricamento PDF avviato']);
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 45000);
 
   function arrayBufferToBase64(buffer) {
     const bytes = new Uint8Array(buffer);
@@ -510,19 +634,134 @@ async function analyzeEmailText() {
     return btoa(binary);
   }
 
-  try {
-    setTimeout(() => {
-      setAnalysisSteps((steps) => [...steps, 'Preparazione PDF']);
-    }, 500);
+  function readFileAsDataUrl(fileToRead) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-    const fileBuffer = await file.arrayBuffer();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Impossibile leggere la foto'));
+
+      reader.readAsDataURL(fileToRead);
+    });
+  }
+
+  function loadImage(dataUrl) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error('Impossibile caricare la foto'));
+
+      image.src = dataUrl;
+    });
+  }
+
+  function canvasToBlob(canvas) {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error('Impossibile comprimere la foto'));
+            return;
+          }
+
+          resolve(blob);
+        },
+        'image/jpeg',
+        0.72
+      );
+    });
+  }
+
+  async function prepareImageForUpload(imageFile) {
+    const dataUrl = await readFileAsDataUrl(imageFile);
+    const image = await loadImage(dataUrl);
+
+    const maxSide = 1400;
+    const longestSide = Math.max(image.width, image.height);
+    const scale = longestSide > maxSide ? maxSide / longestSide : 1;
+
+    const width = Math.round(image.width * scale);
+    const height = Math.round(image.height * scale);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      throw new Error('Canvas non disponibile');
+    }
+
+    context.drawImage(image, 0, 0, width, height);
+
+    const blob = await canvasToBlob(canvas);
+
+    const safeName = imageFile.name
+      ? imageFile.name.replace(/\.[^/.]+$/, '.jpg')
+      : 'foto-scadenza.jpg';
+
+    return new File([blob], safeName, {
+      type: 'image/jpeg',
+    });
+  }
+
+  const isPdf =
+    file.type === 'application/pdf' ||
+    file.name?.toLowerCase().endsWith('.pdf');
+
+  const isImage =
+    file.type?.startsWith('image/') ||
+    /\.(jpg|jpeg|png|heic|heif|webp)$/i.test(file.name || '');
+
+  if (!isPdf && !isImage) {
+    showToast('Formato non supportato. Carica un PDF o una foto.', 'error');
+    return;
+  }
+
+  console.log('Documento selezionato:', file.name, file.type, file.size);
+
+  setUploadedFileName(file.name || 'Documento');
+  setIsAnalyzing(true);
+  setShowExtraction(false);
+  setAnalysisSteps(['Caricamento documento avviato']);
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
+
+  try {
+    let fileToSend = file;
+
+    if (isImage) {
+      setAnalysisSteps((steps) => [...steps, 'Ottimizzazione foto']);
+
+      fileToSend = await prepareImageForUpload(file);
+
+      console.log(
+        'Foto ottimizzata:',
+        fileToSend.name,
+        fileToSend.type,
+        fileToSend.size
+      );
+    }
+
+    if (fileToSend.size > 4 * 1024 * 1024) {
+      showToast(
+        'Documento troppo pesante. Prova con una foto più leggera o un PDF.',
+        'error'
+      );
+      return;
+    }
+
+    setAnalysisSteps((steps) => [...steps, 'Preparazione documento']);
+
+    const fileBuffer = await fileToSend.arrayBuffer();
     const fileBase64 = arrayBufferToBase64(fileBuffer);
 
-    console.log('PDF convertito in base64:', fileBase64.length);
+    console.log('Documento convertito in base64:', fileBase64.length);
 
-    setTimeout(() => {
-      setAnalysisSteps((steps) => [...steps, 'Invio PDF al server']);
-    }, 900);
+    setAnalysisSteps((steps) => [...steps, 'Invio documento al server']);
 
     const response = await fetch(`${API_BASE_URL}/api/parse-pdf`, {
       method: 'POST',
@@ -531,8 +770,8 @@ async function analyzeEmailText() {
       },
       signal: controller.signal,
       body: JSON.stringify({
-        fileName: file.name,
-        mimeType: file.type || 'application/pdf',
+        fileName: fileToSend.name || 'documento',
+        mimeType: fileToSend.type || 'application/octet-stream',
         fileBase64,
       }),
     });
@@ -546,17 +785,17 @@ async function analyzeEmailText() {
     try {
       data = JSON.parse(raw);
     } catch (error) {
-      console.error('Risposta non JSON PDF:', raw);
-      showToast('Errore tecnico durante la lettura del PDF.', 'error');
+      console.error('Risposta non JSON documento:', raw);
+      showToast('Errore tecnico durante la lettura del documento.', 'error');
       return;
     }
 
-    console.log('PDF DEBUG:', data.result?.debugText);
+    console.log('DOCUMENTO DEBUG:', data.result?.debugText);
 
     if (!response.ok) {
       console.error('Errore API parse-pdf:', data);
       showToast(
-        data?.error || 'Errore durante la lettura del PDF.',
+        data?.error || 'Errore durante la lettura del documento.',
         'error'
       );
       return;
@@ -569,13 +808,15 @@ async function analyzeEmailText() {
       dueDate: data.result?.dueDate || '',
       amount: data.result?.amount ?? null,
       notes: '',
-      insight: 'Dati estratti automaticamente dal PDF.',
+      insight: isImage
+        ? 'Dati estratti automaticamente dalla foto.'
+        : 'Dati estratti automaticamente dal PDF.',
     });
 
-    setAnalysisSteps((steps) => [...steps, 'Dati estratti dal PDF']);
+    setAnalysisSteps((steps) => [...steps, 'Dati estratti dal documento']);
     setShowExtraction(true);
   } catch (error) {
-    console.error('Errore analisi PDF:', {
+    console.error('Errore analisi documento:', {
       name: error?.name,
       message: error?.message,
       stack: error?.stack,
@@ -583,12 +824,12 @@ async function analyzeEmailText() {
 
     if (error.name === 'AbortError') {
       showToast(
-        'Lettura PDF troppo lenta. Riprova con un file più leggero.',
+        'Lettura troppo lenta. Riprova con un file più leggero.',
         'error'
       );
     } else {
       showToast(
-        'Errore durante la lettura del PDF. Controlla il file o la connessione.',
+        'Errore durante la lettura del documento. Prova con una foto più chiara o un PDF.',
         'error'
       );
     }
@@ -1343,10 +1584,10 @@ if (existingDeadline) {
           }}
         >
           <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,image/*"
-            style={{ display: 'none' }}
+  ref={fileInputRef}
+  type="file"
+  accept=".pdf,application/pdf"
+  style={{ display: 'none' }}
             onChange={(e) => {
               const file = e.target.files?.[0];
 
@@ -1382,7 +1623,15 @@ if (existingDeadline) {
   }}
 >
   <Upload size={20} />
-  Carica PDF o foto
+  Carica PDF
+</button>
+
+<button
+  className="secondary"
+  onClick={takePhotoAndAnalyze}
+>
+  <CameraIcon size={20} />
+  Scatta foto
 </button>
 
               <button
@@ -1406,7 +1655,7 @@ if (existingDeadline) {
             </div>
 
             <small>
-  PDF, foto o testo mail. Nessuna scadenza viene salvata senza conferma.
+  PDF, foto scattata o testo mail. Nessuna scadenza viene salvata senza conferma.
 </small>
           </div>
 
@@ -1914,7 +2163,22 @@ if (existingDeadline) {
             </div>
 
       {isNativeApp && (
-  <nav className="mobile-tabbar" aria-label="Navigazione app">
+  <nav
+  ref={tabbarRef}
+  className="mobile-tabbar"
+  aria-label="Navigazione app"
+  style={{ '--active-tab-index': activeTabIndex }}
+  onTouchStart={handleTabbarTouchStart}
+  onTouchMove={handleTabbarTouchMove}
+  onTouchEnd={handleTabbarTouchEnd}
+  onTouchCancel={handleTabbarTouchEnd}
+  onMouseDown={handleTabbarMouseDown}
+  onMouseMove={handleTabbarMouseMove}
+  onMouseUp={handleTabbarMouseUp}
+  onMouseLeave={handleTabbarMouseUp}
+>
+    <span className="mobile-tabbar__liquid" aria-hidden="true"></span>
+
     <button
       type="button"
       className={`mobile-tabbar__item ${

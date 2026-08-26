@@ -60,5 +60,16 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+
+	<key>NSCameraUsageDescription</key>
+	<string>ScadenzeFacili usa la fotocamera per fotografare documenti e trovare automaticamente le scadenze.</string>
+	
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>ScadenzeFacili può salvare temporaneamente la foto del documento per leggere automaticamente la scadenza.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ScadenzeFacili può accedere alla libreria foto solo se vuoi selezionare o gestire una foto del documento da analizzare.</string>
+
+
 </dict>
 </plist>

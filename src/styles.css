@@ -2448,3 +2448,68 @@ input { width: 100%; border-radius: 14px; border: 1px solid #cbd5e1; padding: 14
     min-height: 56px;
   }
 }
+/* Fix campi estrazione su app iOS */
+@media (max-width: 720px) {
+  .native-app .extraction {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 130px;
+  }
+
+  .native-app .editable-extraction,
+  .native-app .extracted-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .native-app .editable-extraction label,
+  .native-app .extracted-grid label {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .native-app .editable-extraction input,
+  .native-app .editable-extraction select,
+  .native-app .editable-extraction textarea,
+  .native-app .extracted-grid input,
+  .native-app .extracted-grid select,
+  .native-app .extracted-grid textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .native-app .editable-extraction input[type='date'],
+  .native-app .extracted-grid input[type='date'] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    text-align: left;
+    padding-left: 22px;
+    padding-right: 22px;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .native-app .editable-extraction input[type='date']::-webkit-date-and-time-value,
+  .native-app .extracted-grid input[type='date']::-webkit-date-and-time-value {
+    text-align: left;
+  }
+
+  .native-app .smart-note {
+    margin-bottom: 16px;
+  }
+
+  .native-app .extraction .actions {
+    margin-bottom: 110px;
+  }
+}
